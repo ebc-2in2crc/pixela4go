@@ -4,3 +4,6 @@ go:
 script:
 - make lint
 - make test
+env:
+  global:
+    - PIXELA4GO_E2E_TEST_RUN=
