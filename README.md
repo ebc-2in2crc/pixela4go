@@ -157,7 +157,7 @@ func main() {
 6. Commit your changes (`git commit -am 'Add some feature'`)
 7. Create new Pull Request
 
-## Licence
+## License
 
 [MIT](https://github.com/ebc-2in2crc/pixela4go/blob/master/LICENSE)
 
