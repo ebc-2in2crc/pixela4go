@@ -67,7 +67,7 @@ const (
 // shibafu (green), momiji (red), sora (blue), ichou (yellow), ajisai (purple) and kuro (black) are supported as color kind.
 const (
 	GraphColorShibafu = "shibafu"
-	GraphColorMomiji  = "momiji "
+	GraphColorMomiji  = "momiji"
 	GraphColorSora    = "sora"
 	GraphColorIchou   = "ichou"
 	GraphColorAjisai  = "ajisai"
