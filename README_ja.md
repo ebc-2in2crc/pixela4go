@@ -50,25 +50,6 @@ func main() {
 		log.Fatal(result.Message)
 	}
 
-	// 新しい slack チャンネル を作る
-	cci := &pixela.ChannelCreateInput{
-		ID:          pixela.String("channel-id"),
-		Name:        pixela.String("channel-name"),
-		Type:        pixela.String(pixela.ChannelTypeSlack),
-		SlackDetail: &pixela4go.SlackDetail{
-			URL:         pixela4go.String("https://hooks.slack.com/services/xxxx"),
-			UserName:    pixela4go.String("slack-user-name"),
-			ChannelName: pixela4go.String("slack-channel-name"),
-		},
-	}
-	result, err = client.Channel().Create(cci)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if result.IsSuccess == false {
-		log.Fatal(result.Message)
-	}
-
 	// 新しいグラフを作る
 	gci := &pixela.GraphCreateInput{
 		ID:                  pixela.String("graph-id"),
@@ -96,25 +77,6 @@ func main() {
 		GraphID:      pixela.String("graph-id"),
 	}
 	result, err = client.Pixel().Create(pci)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if result.IsSuccess == false {
-		log.Fatal(result.Message)
-	}
-
-	// 新しい通知ルールを作る
-	nci := &pixela.NotificationCreateInput{
-		GraphID:   pixela.String("graph-id"),
-		ID:        pixela.String("notification-id"),
-		Name:      pixela.String("notification-name"),
-		Target:    pixela.String(pixela.NotificationTargetQuantity),
-		Condition: pixela.String(pixela.NotificationConditionGreaterThan),
-		Threshold: pixela.String("3"),
-		RemindBy:  pixela.String("23"),
-		ChannelID: pixela.String("channel-id"),
-	}
-	result, err = client.Notification().Create(nci)
 	if err != nil {
 		log.Fatal(err)
 	}
