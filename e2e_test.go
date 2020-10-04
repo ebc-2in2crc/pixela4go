@@ -41,21 +41,11 @@ If you run E2E test, Set below environment variables.
 	testE2EPixelGet(t)
 	testE2EPixelDelete(t)
 
-	testE2EChannelCreate(t)
-	testE2EChannelUpdate(t)
-	testE2EChannelGetAll(t)
-
-	testE2ENotificationCreate(t)
-	testE2ENotificationUpdate(t)
-	testE2ENotificationGetAll(t)
-	testE2ENotificationDelete(t)
-
 	testE2EWebhookCreate(t)
 	testE2EWebhookInvoke(t)
 	testE2EWebhookGetAll(t)
 	testE2EWebhookDelete(t)
 
-	testE2EChannelDelete(t)
 	testE2EGraphDelete(t)
 	testE2EUserDelete(t)
 }
