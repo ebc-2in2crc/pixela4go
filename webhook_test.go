@@ -23,7 +23,7 @@ func TestWebhook_CreateCreateRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/webhooks", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -100,7 +100,7 @@ func TestCreateWebhook_GetAllRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/webhooks", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -170,7 +170,7 @@ func TestWebhook_CreateDeleteRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/webhooks/webhook-hash", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks/webhook-hash", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -226,7 +226,7 @@ func TestWebhook_CreateInvokeRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/webhooks/webhook-hash", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks/webhook-hash", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}

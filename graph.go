@@ -50,7 +50,7 @@ func (g *Graph) createCreateRequestParameter(input *GraphCreateInput) (*requestP
 
 	return &requestParameter{
 		Method: http.MethodPost,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs", g.UserName),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs", g.UserName),
 		Header: map[string]string{userToken: g.Token},
 		Body:   b,
 	}, nil
@@ -108,7 +108,7 @@ func (g *Graph) GetAll() (*GraphDefinitions, error) {
 func (g *Graph) createGetAllRequestParameter() (*requestParameter, error) {
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs", g.UserName),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs", g.UserName),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
 	}, nil
@@ -175,7 +175,7 @@ func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) (*requestP
 
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s?%s&%s&%s", g.UserName, ID, date, mode, appearance),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s?%s&%s&%s", g.UserName, ID, date, mode, appearance),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
 	}, nil
@@ -206,10 +206,10 @@ func (g *Graph) URL(input *GraphURLInput) string {
 	ID := StringValue(input.ID)
 	mode := StringValue(input.Mode)
 	if mode == "" {
-		return fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s.html", g.UserName, ID)
+		return fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s.html", g.UserName, ID)
 	}
 
-	return fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s.html?mode=%s", g.UserName, ID, mode)
+	return fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s.html?mode=%s", g.UserName, ID, mode)
 }
 
 // GraphURLInput is input of Graph.GetURL().
@@ -221,7 +221,7 @@ type GraphURLInput struct {
 
 // GraphsURL displays graph list by detail in html format.
 func (g *Graph) GraphsURL() string {
-	return fmt.Sprintf(APIBaseURL+"/users/%s/graphs.html", g.UserName)
+	return fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs.html", g.UserName)
 }
 
 // Stats is various statistics based on the registered information.
@@ -266,7 +266,7 @@ func (g *Graph) createStatsRequestParameter(input *GraphStatsInput) (*requestPar
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/stats", g.UserName, ID),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/stats", g.UserName, ID),
 		Header: map[string]string{},
 		Body:   []byte{},
 	}, nil
@@ -306,7 +306,7 @@ func (g *Graph) createUpdateRequestParameter(input *GraphUpdateInput) (*requestP
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodPut,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s", g.UserName, ID),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", g.UserName, ID),
 		Header: map[string]string{userToken: g.Token},
 		Body:   b,
 	}, nil
@@ -332,7 +332,7 @@ func (g *Graph) createDeleteRequestParameter(input *GraphDeleteInput) (*requestP
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodDelete,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s", g.UserName, ID),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", g.UserName, ID),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
 	}, nil
@@ -399,7 +399,7 @@ func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInp
 	}
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/pixels?%s&%s", g.UserName, ID, from, to),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels?%s&%s", g.UserName, ID, from, to),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
 	}, nil
@@ -425,7 +425,7 @@ func (g *Graph) createStopwatchRequestParameter(input *GraphStopwatchInput) (*re
 	graphID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodPost,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/stopwatch", g.UserName, graphID),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/stopwatch", g.UserName, graphID),
 		Header: map[string]string{contentLength: "0", userToken: g.Token},
 		Body:   []byte{},
 	}, nil

@@ -10,7 +10,10 @@ import (
 )
 
 // APIBaseURL is Base URL for API requests.
-const APIBaseURL = "https://pixe.la/v1"
+const APIBaseURL = "https://pixe.la"
+
+// APIBaseURLForV1 is Base URL for API version 1 requests.
+const APIBaseURLForV1 = APIBaseURL + "/v1"
 const (
 	contentType   = "Content-Type"
 	contentLength = "Content-Length"

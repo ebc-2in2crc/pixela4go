@@ -44,7 +44,7 @@ func (p *Pixel) createCreateRequestParameter(input *PixelCreateInput) (*requestP
 	graphID := StringValue(input.GraphID)
 	return &requestParameter{
 		Method: http.MethodPost,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s", p.UserName, graphID),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", p.UserName, graphID),
 		Header: map[string]string{userToken: p.Token},
 		Body:   b,
 	}, nil
@@ -71,7 +71,7 @@ func (p *Pixel) createIncrementRequestParameter(input *PixelIncrementInput) (*re
 	graphID := StringValue(input.GraphID)
 	return &requestParameter{
 		Method: http.MethodPut,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/increment", p.UserName, graphID),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/increment", p.UserName, graphID),
 		Header: map[string]string{contentLength: "0", userToken: p.Token},
 		Body:   []byte{},
 	}, nil
@@ -98,7 +98,7 @@ func (p *Pixel) createDecrementRequestParameter(input *PixelDecrementInput) (*re
 	graphID := StringValue(input.GraphID)
 	return &requestParameter{
 		Method: http.MethodPut,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/decrement", p.UserName, graphID),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/decrement", p.UserName, graphID),
 		Header: map[string]string{contentLength: "0", userToken: p.Token},
 		Body:   []byte{},
 	}, nil
@@ -138,7 +138,7 @@ func (p *Pixel) createGetRequestParameter(input *PixelGetInput) (*requestParamet
 	date := StringValue(input.Date)
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
 		Header: map[string]string{userToken: p.Token},
 		Body:   []byte{},
 	}, nil
@@ -181,7 +181,7 @@ func (p *Pixel) createUpdateRequestParameter(input *PixelUpdateInput) (*requestP
 	date := StringValue(input.Date)
 	return &requestParameter{
 		Method: http.MethodPut,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
 		Header: map[string]string{userToken: p.Token},
 		Body:   b,
 	}, nil
@@ -210,7 +210,7 @@ func (p *Pixel) createDeleteRequestParameter(input *PixelDeleteInput) (*requestP
 	date := StringValue(input.Date)
 	return &requestParameter{
 		Method: http.MethodDelete,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
 		Header: map[string]string{userToken: p.Token},
 		Body:   []byte{},
 	}, nil

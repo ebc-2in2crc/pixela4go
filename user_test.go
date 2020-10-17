@@ -23,7 +23,7 @@ func TestCreateUserCreateRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL + "/users")
+	expect := fmt.Sprintf(APIBaseURLForV1 + "/users")
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -92,7 +92,7 @@ func TestCreateUserUpdateRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -166,7 +166,7 @@ func TestCreateUserDeleteRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}

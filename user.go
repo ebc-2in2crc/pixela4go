@@ -48,7 +48,7 @@ func (u *User) createCreateRequestParameter(input *UserCreateInput) (*requestPar
 
 	return &requestParameter{
 		Method: http.MethodPost,
-		URL:    APIBaseURL + "/users",
+		URL:    APIBaseURLForV1 + "/users",
 		Header: map[string]string{},
 		Body:   b,
 	}, nil
@@ -98,7 +98,7 @@ func (u *User) createUpdateRequestParameter(input *UserUpdateInput) (*requestPar
 
 	return &requestParameter{
 		Method: http.MethodPut,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s", u.UserName),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s", u.UserName),
 		Header: map[string]string{userToken: u.Token},
 		Body:   b,
 	}, nil
@@ -122,7 +122,7 @@ func (u *User) Delete() (*Result, error) {
 func (u *User) createDeleteRequestParameter() (*requestParameter, error) {
 	return &requestParameter{
 		Method: http.MethodDelete,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s", u.UserName),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s", u.UserName),
 		Header: map[string]string{userToken: u.Token},
 		Body:   []byte{},
 	}, nil

@@ -63,7 +63,7 @@ func (w *Webhook) createCreateRequestParameter(input *WebhookCreateInput) (*requ
 
 	return &requestParameter{
 		Method: http.MethodPost,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/webhooks", w.UserName),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks", w.UserName),
 		Header: map[string]string{userToken: w.Token},
 		Body:   b,
 	}, nil
@@ -106,7 +106,7 @@ type WebhookDefinition struct {
 func (w *Webhook) createGetAllRequestParameter() (*requestParameter, error) {
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/webhooks", w.UserName),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks", w.UserName),
 		Header: map[string]string{userToken: w.Token},
 		Body:   []byte{},
 	}, nil
@@ -132,7 +132,7 @@ func (w *Webhook) createDeleteRequestParameter(input *WebhookDeleteInput) (*requ
 	hash := StringValue(input.WebhookHash)
 	return &requestParameter{
 		Method: http.MethodDelete,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/webhooks/%s", w.UserName, hash),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks/%s", w.UserName, hash),
 		Header: map[string]string{userToken: w.Token},
 		Body:   []byte{},
 	}, nil
@@ -156,7 +156,7 @@ func (w *Webhook) createInvokeRequestParameter(input *WebhookInvokeInput) (*requ
 	hash := StringValue(input.WebhookHash)
 	return &requestParameter{
 		Method: http.MethodPost,
-		URL:    fmt.Sprintf(APIBaseURL+"/users/%s/webhooks/%s", w.UserName, hash),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks/%s", w.UserName, hash),
 		Header: map[string]string{contentLength: "0"},
 		Body:   []byte{},
 	}, nil

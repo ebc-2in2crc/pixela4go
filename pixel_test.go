@@ -24,7 +24,7 @@ func TestPixel_CreateCreateRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -82,7 +82,7 @@ func TestPixel_CreateIncrementRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/increment", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/increment", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -141,7 +141,7 @@ func TestPixel_CreateDecrementRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/decrement", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/decrement", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -196,7 +196,7 @@ func TestPixel_CreateGetRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/%s", userName, graphID, "20180915")
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s", userName, graphID, "20180915")
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -269,7 +269,7 @@ func TestPixel_CreateUpdateRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/20180915", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/20180915", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -339,7 +339,7 @@ func TestPixel_CreateDeleteRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/20180915", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/20180915", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}

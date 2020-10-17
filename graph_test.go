@@ -30,7 +30,7 @@ func TestGraph_CreateCreateRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -117,7 +117,7 @@ func TestGraph_CreateGetAllRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs", userName)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -202,7 +202,7 @@ func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s?date=20180101&mode=short&appearance=dark", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s?date=20180101&mode=short&appearance=dark", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -260,7 +260,7 @@ func TestGraph_GetSVGFail(t *testing.T) {
 
 func TestGraph_URL(t *testing.T) {
 	client := New(userName, token)
-	baseURL := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s.html", userName, graphID)
+	baseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s.html", userName, graphID)
 	params := []struct {
 		mode   string
 		expect string
@@ -283,7 +283,7 @@ func TestGraph_URL(t *testing.T) {
 func TestGraph_GraphsURL(t *testing.T) {
 	client := New(userName, token)
 	url := client.Graph().GraphsURL()
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs.html", userName)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs.html", userName)
 	if url != expect {
 		t.Errorf("got: %s\nwant: %s", url, expect)
 	}
@@ -301,7 +301,7 @@ func TestGraph_CreateStatsRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/stats", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/stats", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -383,7 +383,7 @@ func TestGraph_CreateUpdateRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -471,7 +471,7 @@ func TestGraph_CreateDeleteRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -527,7 +527,7 @@ func TestGraph_CreateGetPixelDatesRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/pixels?from=20180101&to=20181231", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels?from=20180101&to=20181231", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -597,7 +597,7 @@ func TestGraph_CreateStopwatchRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
 	}
 
-	expect := fmt.Sprintf(APIBaseURL+"/users/%s/graphs/%s/stopwatch", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/stopwatch", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
