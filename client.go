@@ -16,6 +16,11 @@ func (c *Client) User() *User {
 	return &User{UserName: c.UserName, Token: c.Token}
 }
 
+// UserProfile returns a new Pixela user profile API client.
+func (c *Client) UserProfile() *UserProfile {
+	return &UserProfile{UserName: c.UserName, Token: c.Token}
+}
+
 // Graph returns a new Pixela graph API client.
 func (c *Client) Graph() *Graph {
 	return &Graph{UserName: c.UserName, Token: c.Token}
