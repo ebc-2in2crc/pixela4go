@@ -50,6 +50,24 @@ func main() {
 		log.Fatal(result.Message)
 	}
 
+	// Updates the profile information for the user
+	upi := &pixela.UserProfileUpdateInput{
+		DisplayName:       pixela.String("display-name"),
+		GravatarIconEmail: pixela.String("gravatar-icon-email"),
+		Title:             pixela.String("title"),
+		Timezone:          pixela.String("Asia/Tokyo"),
+		AboutURL:          pixela.String("https://github.com/ebc-2in2crc"),
+		ContributeURLs:    []string{},
+		PinnedGraphID:     pixela.String("pinned-graph-id"),
+	}
+	result, err = client.UserProfile().Update(upi)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if result.IsSuccess == false {
+		log.Fatal(result.Message)
+	}
+
 	// Create new graph
 	gci := &pixela.GraphCreateInput{
 		ID:                  pixela.String("graph-id"),
@@ -77,24 +95,6 @@ func main() {
 		GraphID:      pixela.String("graph-id"),
 	}
 	result, err = client.Pixel().Create(pci)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if result.IsSuccess == false {
-		log.Fatal(result.Message)
-	}
-
-	// Updates the profile information for the user
-	upi := &pixela.UserProfileUpdateInput{
-		DisplayName:       pixela.String("display-name"),
-		GravatarIconEmail: pixela.String("gravatar-icon-email"),
-		Title:             pixela.String("title"),
-		Timezone:          pixela.String("Asia/Tokyo"),
-		AboutURL:          pixela.String("https://github.com/ebc-2in2crc"),
-		ContributeURLs:    []string{},
-		PinnedGraphID:     pixela.String("pinned-graph-id"),
-	}
-	result, err = client.UserProfile().Update(upi)
 	if err != nil {
 		log.Fatal(err)
 	}
