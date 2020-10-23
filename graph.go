@@ -219,11 +219,6 @@ type GraphURLInput struct {
 	Mode *string
 }
 
-// GraphsURL displays graph list by detail in html format.
-func (g *Graph) GraphsURL() string {
-	return fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs.html", g.UserName)
-}
-
 // Stats is various statistics based on the registered information.
 type Stats struct {
 	TotalPixelsCount int     `json:"totalPixelsCount"`

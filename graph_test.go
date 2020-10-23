@@ -280,15 +280,6 @@ func TestGraph_URL(t *testing.T) {
 	}
 }
 
-func TestGraph_GraphsURL(t *testing.T) {
-	client := New(userName, token)
-	url := client.Graph().GraphsURL()
-	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs.html", userName)
-	if url != expect {
-		t.Errorf("got: %s\nwant: %s", url, expect)
-	}
-}
-
 func TestGraph_CreateStatsRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphStatsInput{ID: String(graphID)}
