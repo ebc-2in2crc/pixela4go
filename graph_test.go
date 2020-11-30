@@ -634,3 +634,82 @@ func TestGraph_StopwatchError(t *testing.T) {
 
 	testPageNotFoundError(t, err)
 }
+
+func TestGraph_CreateGetRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &GraphGetInput{ID: String(graphID)}
+	param, err := client.Graph().createGetRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodGet {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/graph-def", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	if bytes.Equal(param.Body, []byte{}) == false {
+		t.Errorf("Body: %s\nwant: \"\"", string(param.Body))
+	}
+}
+
+func TestGraph_Get(t *testing.T) {
+	s := `{"id":"test-graph","name":"graph-name","unit":"commit","type":"int","color":"shibafu","timezone":"Asia/Tokyo","purgeCacheURLs":["https://camo.githubusercontent.com/xxx/xxxx"],"selfSufficient":"increment","isSecret":true,"publishOptionalData":true}`
+	b := []byte(s)
+	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
+
+	client := New(userName, token)
+	input := &GraphGetInput{ID: String(graphID)}
+	definition, err := client.Graph().Get(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	expect := &GraphDefinition{
+		ID:                  "test-graph",
+		Name:                "graph-name",
+		Unit:                "commit",
+		Type:                "int",
+		Color:               "shibafu",
+		TimeZone:            "Asia/Tokyo",
+		PurgeCacheURLs:      []string{"https://camo.githubusercontent.com/xxx/xxxx"},
+		SelfSufficient:      "increment",
+		IsSecret:            true,
+		PublishOptionalData: true,
+		Result:              Result{IsSuccess: true},
+	}
+	if reflect.DeepEqual(definition, expect) == false {
+		t.Errorf("got: %v\nwant: %v", definition, expect)
+	}
+}
+
+func TestGraph_GetFail(t *testing.T) {
+	clientMock = newAPIFailedMock()
+
+	client := New(userName, token)
+	input := &GraphGetInput{ID: String(graphID)}
+	result, err := client.Graph().Get(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", result)
+	}
+
+	testAPIFailedResult(t, &result.Result, err)
+}
+
+func TestGraph_GetError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &GraphGetInput{ID: String(graphID)}
+	_, err := client.Graph().Get(input)
+
+	testPageNotFoundError(t, err)
+}

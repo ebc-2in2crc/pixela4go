@@ -63,6 +63,33 @@ func testE2EGraphGetAll(t *testing.T) {
 	}
 }
 
+func testE2EGraphGet(t *testing.T) {
+	input := &GraphGetInput{ID: String(graphID)}
+	result, err := e2eClient.Graph().Get(input)
+	if err != nil {
+		t.Errorf("Graph.Get() got: %+v\nwant: nil", err)
+	}
+	if result.IsSuccess == false {
+		t.Errorf("Graph.Get() got: %+v\nwant: true", result)
+	}
+	expected := &GraphDefinition{
+		ID:             graphID,
+		Name:           "graph-name",
+		Unit:           "times",
+		Type:           GraphTypeInt,
+		Color:          GraphColorShibafu,
+		TimeZone:       "Asia/Tokyo",
+		SelfSufficient: GraphSelfSufficientIncrement,
+		Result: Result{
+			IsSuccess: true,
+			Message:   "",
+		},
+	}
+	if reflect.DeepEqual(result, expected) == false {
+		t.Errorf("Graph.Get() got: %+v\nwant: %+v", result, expected)
+	}
+}
+
 func testE2EGraphStopwatch(t *testing.T) {
 	// Start the measurement of the time.
 	invokeGraphStopwatch(t)

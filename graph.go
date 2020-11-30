@@ -132,6 +132,7 @@ type GraphDefinition struct {
 	SelfSufficient      string   `json:"selfSufficient"`
 	IsSecret            bool     `json:"isSecret"`
 	PublishOptionalData bool     `json:"publishOptionalData"`
+	Result
 }
 
 // GetSVG get a graph expressed in SVG format diagram that based on the registered information.
@@ -424,4 +425,41 @@ func (g *Graph) createStopwatchRequestParameter(input *GraphStopwatchInput) (*re
 		Header: map[string]string{contentLength: "0", userToken: g.Token},
 		Body:   []byte{},
 	}, nil
+}
+
+// Get gets predefined pixelation graph definitions.
+func (g *Graph) Get(input *GraphGetInput) (*GraphDefinition, error) {
+	param, err := g.createGetRequestParameter(input)
+	if err != nil {
+		return &GraphDefinition{}, errors.Wrapf(err, "failed to create get graph parameter")
+	}
+
+	b, err := doRequest(param)
+	if err != nil {
+		return &GraphDefinition{}, errors.Wrapf(err, "failed to do request")
+	}
+
+	var definition GraphDefinition
+	if err := json.Unmarshal(b, &definition); err != nil {
+		return &GraphDefinition{}, errors.Wrapf(err, "failed to unmarshal json")
+	}
+
+	definition.IsSuccess = definition.Message == ""
+	return &definition, nil
+}
+
+func (g *Graph) createGetRequestParameter(input *GraphGetInput) (*requestParameter, error) {
+	ID := StringValue(input.ID)
+	return &requestParameter{
+		Method: http.MethodGet,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/graph-def", g.UserName, ID),
+		Header: map[string]string{userToken: g.Token},
+		Body:   []byte{},
+	}, nil
+}
+
+// GraphGetInput is input of Graph.Get().
+type GraphGetInput struct {
+	// ID is a required field
+	ID *string `json:"-"`
 }
