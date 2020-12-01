@@ -121,8 +121,12 @@ func testE2EGraphGetPixelDates(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Graph.GetPixelDates() got: %+v\nwant: true", result)
 	}
-	if len(result.Pixels) != 1 {
-		t.Errorf("Graph.GetPixelDates() got: %+v\nwant: 1", len(result.Pixels))
+	pixels, ok := result.Pixels.([]string)
+	if ok == false {
+		t.Errorf("Graph.GetPixelDates() got: %T\nwant: []string", result.Pixels)
+	}
+	if len(pixels) != 1 {
+		t.Errorf("Graph.GetPixelDates() got: %+v\nwant: 1", len(pixels))
 	}
 }
 

@@ -360,27 +360,78 @@ func (g *Graph) GetPixelDates(input *GraphGetPixelDatesInput) (*Pixels, error) {
 		return &Pixels{}, errors.Wrapf(err, "failed to do request")
 	}
 
-	var pixels Pixels
-	if err := json.Unmarshal(b, &pixels); err != nil {
+	pixels, err := unmarshalPixels(b, BoolValue(input.WithBody))
+	if err != nil {
 		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
 	}
 
 	pixels.IsSuccess = pixels.Message == ""
-	return &pixels, nil
+	return pixels, nil
 }
 
 // GraphGetPixelDatesInput is input of Graph.GetPixelDates().
 type GraphGetPixelDatesInput struct {
 	// ID is a required field
-	ID   *string
-	From *string
-	To   *string
+	ID       *string
+	From     *string
+	To       *string
+	WithBody *bool
 }
 
 // Pixels is Date list of Pixel registered in the graph.
 type Pixels struct {
+	// Pixels as []PixelWithBody when `withBody` is true.
+	// Pixels as []string when `withBody` is false.
+	Pixels interface{}
+	Result
+}
+
+// PixelWithBody is Date of Pixel registered in the graph.
+type PixelWithBody struct {
+	Date         string
+	Quantity     string `json:"quantity"`
+	OptionalData string `json:"optionalData"`
+}
+
+type pixelsWithBody struct {
+	Pixels []PixelWithBody `json:"pixels"`
+	Result
+}
+
+type pixelsWithNoBody struct {
 	Pixels []string `json:"pixels"`
 	Result
+}
+
+func unmarshalPixels(b []byte, withBody bool) (*Pixels, error) {
+	if withBody {
+		return unmarshalPixelsWithBody(b)
+	}
+	return unmarshalPixelsNoBody(b)
+}
+
+func unmarshalPixelsWithBody(b []byte) (*Pixels, error) {
+	var pixels pixelsWithBody
+	if err := json.Unmarshal(b, &pixels); err != nil {
+		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
+	}
+
+	return &Pixels{
+		Pixels: pixels.Pixels,
+		Result: pixels.Result,
+	}, nil
+}
+
+func unmarshalPixelsNoBody(b []byte) (*Pixels, error) {
+	var pixels pixelsWithNoBody
+	if err := json.Unmarshal(b, &pixels); err != nil {
+		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
+	}
+
+	return &Pixels{
+		Pixels: pixels.Pixels,
+		Result: pixels.Result,
+	}, nil
 }
 
 func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInput) (*requestParameter, error) {
@@ -393,9 +444,13 @@ func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInp
 	if to != "" {
 		to = "to=" + to
 	}
+	withBody := ""
+	if BoolValue(input.WithBody) {
+		withBody = "withBody=true"
+	}
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels?%s&%s", g.UserName, ID, from, to),
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels?%s&%s&%s", g.UserName, ID, from, to, withBody),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
 	}, nil

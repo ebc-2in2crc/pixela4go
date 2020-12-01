@@ -508,7 +508,12 @@ func TestGraph_DeleteError(t *testing.T) {
 
 func TestGraph_CreateGetPixelDatesRequestParameter(t *testing.T) {
 	client := New(userName, token)
-	input := &GraphGetPixelDatesInput{ID: String(graphID), From: String("20180101"), To: String("20181231")}
+	input := &GraphGetPixelDatesInput{
+		ID:       String(graphID),
+		From:     String("20180101"),
+		To:       String("20181231"),
+		WithBody: Bool(true),
+	}
 	param, err := client.Graph().createGetPixelDatesRequestParameter(input)
 	if err != nil {
 		t.Errorf("got: %v\nwant: nil", err)
@@ -518,7 +523,7 @@ func TestGraph_CreateGetPixelDatesRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels?from=20180101&to=20181231", userName, graphID)
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels?from=20180101&to=20181231&withBody=true", userName, graphID)
 	if param.URL != expect {
 		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
 	}
@@ -546,6 +551,38 @@ func TestGraph_GetPixelDates(t *testing.T) {
 
 	expect := &Pixels{
 		Pixels: []string{"20180101", "20180331"},
+		Result: Result{IsSuccess: true},
+	}
+	if reflect.DeepEqual(pixels, expect) == false {
+		t.Errorf("got: %v\nwant: %v", pixels, expect)
+	}
+}
+
+func TestGraph_GetPixelDatesWithBody(t *testing.T) {
+	s := `{"pixels":[{"date":"20180331","quantity":"1","optionalData":"{\"key\":\"value\"}"}]}`
+	b := []byte(s)
+	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
+
+	client := New(userName, token)
+	input := &GraphGetPixelDatesInput{
+		ID:       String(graphID),
+		From:     String("20180101"),
+		To:       String("20181231"),
+		WithBody: Bool(true),
+	}
+	pixels, err := client.Graph().GetPixelDates(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	expect := &Pixels{
+		Pixels: []PixelWithBody{
+			{
+				Date:         "20180331",
+				Quantity:     "1",
+				OptionalData: "{\"key\":\"value\"}",
+			},
+		},
 		Result: Result{IsSuccess: true},
 	}
 	if reflect.DeepEqual(pixels, expect) == false {
