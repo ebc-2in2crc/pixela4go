@@ -14,10 +14,13 @@ deps:
 .PHONY: devel-deps
 ## Install dependencies for develop
 devel-deps: deps
-	$(GOGET) \
-	golang.org/x/tools/cmd/goimports \
-	golang.org/x/lint/golint \
-	github.com/Songmu/make2help/cmd/make2help
+	sh -c '\
+	tmpdir=$$(mktemp -d); \
+	cd $$tmpdir; \
+	$(GOGET) golang.org/x/tools/cmd/goimports \
+		golang.org/x/lint/golint \
+		github.com/Songmu/make2help/cmd/make2help; \
+	rm -rf $$tmpdir'
 
 .PHONY: test
 ## Run tests
