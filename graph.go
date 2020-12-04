@@ -388,7 +388,7 @@ type Pixels struct {
 
 // PixelWithBody is Date of Pixel registered in the graph.
 type PixelWithBody struct {
-	Date         string
+	Date         string `json:"date"`
 	Quantity     string `json:"quantity"`
 	OptionalData string `json:"optionalData"`
 }
