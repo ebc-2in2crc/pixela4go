@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -16,12 +17,17 @@ type User struct {
 
 // Create creates a new Pixela user.
 func (u *User) Create(input *UserCreateInput) (*Result, error) {
+	return u.CreateWithContext(context.Background(), input)
+}
+
+// CreateWithContext creates a new Pixela user.
+func (u *User) CreateWithContext(ctx context.Context, input *UserCreateInput) (*Result, error) {
 	param, err := u.createCreateRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create user create parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // UserCreateInput is input of User.Create().
@@ -71,12 +77,17 @@ func boolToString(b bool) string {
 
 // Update updates the authentication token for the specified user.
 func (u *User) Update(input *UserUpdateInput) (*Result, error) {
+	return u.UpdateWithContext(context.Background(), input)
+}
+
+// UpdateWithContext updates the authentication token for the specified user.
+func (u *User) UpdateWithContext(ctx context.Context, input *UserUpdateInput) (*Result, error) {
 	param, err := u.createUpdateRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create user update parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // UserUpdateInput is input of User.Update().
@@ -111,12 +122,17 @@ type userUpdate struct {
 
 // Delete deletes the specified registered user.
 func (u *User) Delete() (*Result, error) {
+	return u.DeleteWithContext(context.Background())
+}
+
+// DeleteWithContext deletes the specified registered user.
+func (u *User) DeleteWithContext(ctx context.Context) (*Result, error) {
 	param, err := u.createDeleteRequestParameter()
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create user delete parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 func (u *User) createDeleteRequestParameter() (*requestParameter, error) {

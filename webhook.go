@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -16,12 +17,17 @@ type Webhook struct {
 
 // Create create a new Webhook.
 func (w *Webhook) Create(input *WebhookCreateInput) (*WebhookCreateResult, error) {
+	return w.CreateWithContext(context.Background(), input)
+}
+
+// CreateWithContext create a new Webhook.
+func (w *Webhook) CreateWithContext(ctx context.Context, input *WebhookCreateInput) (*WebhookCreateResult, error) {
 	param, err := w.createCreateRequestParameter(input)
 	if err != nil {
 		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to create webhook create parameter")
 	}
 
-	b, err := doRequest(param)
+	b, err := doRequest(ctx, param)
 	if err != nil {
 		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -71,12 +77,17 @@ func (w *Webhook) createCreateRequestParameter(input *WebhookCreateInput) (*requ
 
 // GetAll get all predefined webhooks definitions.
 func (w *Webhook) GetAll() (*WebhookDefinitions, error) {
+	return w.GetAllWithContext(context.Background())
+}
+
+// GetAllWithContext get all predefined webhooks definitions.
+func (w *Webhook) GetAllWithContext(ctx context.Context) (*WebhookDefinitions, error) {
 	param, err := w.createGetAllRequestParameter()
 	if err != nil {
 		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to create get all webhooks parameter")
 	}
 
-	b, err := doRequest(param)
+	b, err := doRequest(ctx, param)
 	if err != nil {
 		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -114,12 +125,17 @@ func (w *Webhook) createGetAllRequestParameter() (*requestParameter, error) {
 
 // Delete delete the registered Webhook.
 func (w *Webhook) Delete(input *WebhookDeleteInput) (*Result, error) {
+	return w.DeleteWithContext(context.Background(), input)
+}
+
+// DeleteWithContext delete the registered Webhook.
+func (w *Webhook) DeleteWithContext(ctx context.Context, input *WebhookDeleteInput) (*Result, error) {
 	param, err := w.createDeleteRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create webhook delete parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // WebhookDeleteInput is input of Webhook.Delete().
@@ -141,12 +157,18 @@ func (w *Webhook) createDeleteRequestParameter(input *WebhookDeleteInput) (*requ
 // Invoke invoke the webhook registered in advance.
 // It is used "timezone" setting as post date if Graph's "timezone" is specified, if not specified, calculates it in "UTC".
 func (w *Webhook) Invoke(input *WebhookInvokeInput) (*Result, error) {
+	return w.InvokeWithContext(context.Background(), input)
+}
+
+// InvokeWithContext invoke the webhook registered in advance.
+// It is used "timezone" setting as post date if Graph's "timezone" is specified, if not specified, calculates it in "UTC".
+func (w *Webhook) InvokeWithContext(ctx context.Context, input *WebhookInvokeInput) (*Result, error) {
 	param, err := w.createInvokeRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create webhook invoke parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // WebhookInvokeInput is input of Webhook.Invoke().

@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -16,12 +17,17 @@ type Pixel struct {
 
 // Create records the quantity of the specified date as a "Pixel".
 func (p *Pixel) Create(input *PixelCreateInput) (*Result, error) {
+	return p.CreateWithContext(context.Background(), input)
+}
+
+// CreateWithContext records the quantity of the specified date as a "Pixel".
+func (p *Pixel) CreateWithContext(ctx context.Context, input *PixelCreateInput) (*Result, error) {
 	param, err := p.createCreateRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create pixel create parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // PixelCreateInput is input of Pixel.Create().
@@ -53,12 +59,18 @@ func (p *Pixel) createCreateRequestParameter(input *PixelCreateInput) (*requestP
 // Increment increments quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
 // If the graph type is int then 1 added, and for float then 0.01 added.
 func (p *Pixel) Increment(input *PixelIncrementInput) (*Result, error) {
+	return p.IncrementWithContext(context.Background(), input)
+}
+
+// IncrementWithContext increments quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
+// If the graph type is int then 1 added, and for float then 0.01 added.
+func (p *Pixel) IncrementWithContext(ctx context.Context, input *PixelIncrementInput) (*Result, error) {
 	param, err := p.createIncrementRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create pixel increment parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // PixelIncrementInput is input of Pixel.Increment().
@@ -80,12 +92,18 @@ func (p *Pixel) createIncrementRequestParameter(input *PixelIncrementInput) (*re
 // Decrement decrements quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
 // If the graph type is int then -1 added, and for float then -0.01 added.
 func (p *Pixel) Decrement(input *PixelDecrementInput) (*Result, error) {
+	return p.DecrementWithContext(context.Background(), input)
+}
+
+// DecrementWithContext decrements quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
+// If the graph type is int then -1 added, and for float then -0.01 added.
+func (p *Pixel) DecrementWithContext(ctx context.Context, input *PixelDecrementInput) (*Result, error) {
 	param, err := p.createDecrementRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create pixel decrement parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // PixelDecrementInput is input of Pixel.Decrement().
@@ -106,12 +124,17 @@ func (p *Pixel) createDecrementRequestParameter(input *PixelDecrementInput) (*re
 
 // Get gets registered quantity as "Pixel".
 func (p *Pixel) Get(input *PixelGetInput) (*Quantity, error) {
+	return p.GetWithContext(context.Background(), input)
+}
+
+// GetWithContext gets registered quantity as "Pixel".
+func (p *Pixel) GetWithContext(ctx context.Context, input *PixelGetInput) (*Quantity, error) {
 	param, err := p.createGetRequestParameter(input)
 	if err != nil {
 		return &Quantity{}, errors.Wrapf(err, "failed to create pixel get parameter")
 	}
 
-	b, err := doRequest(param)
+	b, err := doRequest(ctx, param)
 	if err != nil {
 		return &Quantity{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -153,12 +176,17 @@ type Quantity struct {
 
 // Update updates the quantity already registered as a "Pixel".
 func (p *Pixel) Update(input *PixelUpdateInput) (*Result, error) {
+	return p.UpdateWithContext(context.Background(), input)
+}
+
+// UpdateWithContext updates the quantity already registered as a "Pixel".
+func (p *Pixel) UpdateWithContext(ctx context.Context, input *PixelUpdateInput) (*Result, error) {
 	param, err := p.createUpdateRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create pixel update parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // PixelUpdateInput is input of Pixel.Update().
@@ -189,12 +217,17 @@ func (p *Pixel) createUpdateRequestParameter(input *PixelUpdateInput) (*requestP
 
 // Delete deletes the registered "Pixel".
 func (p *Pixel) Delete(input *PixelDeleteInput) (*Result, error) {
+	return p.DeleteWithContext(context.Background(), input)
+}
+
+// DeleteWithContext deletes the registered "Pixel".
+func (p *Pixel) DeleteWithContext(ctx context.Context, input *PixelDeleteInput) (*Result, error) {
 	param, err := p.createDeleteRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create pixel delete parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // PixelDeleteInput is input of Pixel.Delete().

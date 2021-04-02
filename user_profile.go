@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -16,12 +17,17 @@ type UserProfile struct {
 
 // Update updates the profile information for the user corresponding to username.
 func (u *UserProfile) Update(input *UserProfileUpdateInput) (*Result, error) {
+	return u.UpdateWithContext(context.Background(), input)
+}
+
+// UpdateWithContext updates the profile information for the user corresponding to username.
+func (u *UserProfile) UpdateWithContext(ctx context.Context, input *UserProfileUpdateInput) (*Result, error) {
 	param, err := u.createUpdateRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create user profile update parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // UserProfileUpdateInput is input of UserProfile.Update().

@@ -2,6 +2,7 @@ package pixela
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -33,8 +34,9 @@ type Result struct {
 	IsSuccess bool   `json:"isSuccess"`
 }
 
-func newHTTPRequest(param *requestParameter) (*http.Request, error) {
-	req, err := http.NewRequest(
+func newHTTPRequest(ctx context.Context, param *requestParameter) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(
+		ctx,
 		param.Method,
 		param.URL,
 		bytes.NewReader(param.Body))
@@ -51,8 +53,8 @@ func newHTTPRequest(param *requestParameter) (*http.Request, error) {
 	return req, nil
 }
 
-func doRequest(param *requestParameter) ([]byte, error) {
-	req, err := newHTTPRequest(param)
+func doRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
+	req, err := newHTTPRequest(ctx, param)
 	if err != nil {
 		return []byte{}, errors.Wrap(err, "failed to create http.Request")
 	}
@@ -75,8 +77,8 @@ func doRequest(param *requestParameter) ([]byte, error) {
 	return b, nil
 }
 
-func mustDoRequest(param *requestParameter) ([]byte, error) {
-	req, err := newHTTPRequest(param)
+func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
+	req, err := newHTTPRequest(ctx, param)
 	if err != nil {
 		return []byte{}, errors.Wrap(err, "failed to create http.Request")
 	}
@@ -103,8 +105,8 @@ func mustDoRequest(param *requestParameter) ([]byte, error) {
 	return b, nil
 }
 
-func doRequestAndParseResponse(param *requestParameter) (*Result, error) {
-	req, err := newHTTPRequest(param)
+func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*Result, error) {
+	req, err := newHTTPRequest(ctx, param)
 	if err != nil {
 		return &Result{}, errors.Wrap(err, "failed to create http.Request")
 	}

@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -16,12 +17,17 @@ type Graph struct {
 
 // Create creates a new pixelation graph definition.
 func (g *Graph) Create(input *GraphCreateInput) (*Result, error) {
+	return g.CreateWithContext(context.Background(), input)
+}
+
+// CreateWithContext creates a new pixelation graph definition.
+func (g *Graph) CreateWithContext(ctx context.Context, input *GraphCreateInput) (*Result, error) {
 	param, err := g.createCreateRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create graph create parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // GraphCreateInput is input of Graph.Create().
@@ -86,12 +92,17 @@ const (
 
 // GetAll gets all predefined pixelation graph definitions.
 func (g *Graph) GetAll() (*GraphDefinitions, error) {
+	return g.GetAllWithContext(context.Background())
+}
+
+// GetAllWithContext gets all predefined pixelation graph definitions.
+func (g *Graph) GetAllWithContext(ctx context.Context) (*GraphDefinitions, error) {
 	param, err := g.createGetAllRequestParameter()
 	if err != nil {
 		return &GraphDefinitions{}, errors.Wrapf(err, "failed to create get all graph parameter")
 	}
 
-	b, err := doRequest(param)
+	b, err := doRequest(ctx, param)
 	if err != nil {
 		return &GraphDefinitions{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -137,12 +148,17 @@ type GraphDefinition struct {
 
 // GetSVG get a graph expressed in SVG format diagram that based on the registered information.
 func (g *Graph) GetSVG(input *GraphGetSVGInput) (string, error) {
+	return g.GetSVGWithContext(context.Background(), input)
+}
+
+// GetSVGWithContext get a graph expressed in SVG format diagram that based on the registered information.
+func (g *Graph) GetSVGWithContext(ctx context.Context, input *GraphGetSVGInput) (string, error) {
 	param, err := g.createGetSVGRequestParameter(input)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to create get svg parameter")
 	}
 
-	b, err := mustDoRequest(param)
+	b, err := mustDoRequest(ctx, param)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to do request")
 	}
@@ -233,12 +249,17 @@ type Stats struct {
 
 // Stats gets various statistics based on the registered information.
 func (g *Graph) Stats(input *GraphStatsInput) (*Stats, error) {
+	return g.StatsWithContext(context.Background(), input)
+}
+
+// StatsWithContext gets various statistics based on the registered information.
+func (g *Graph) StatsWithContext(ctx context.Context, input *GraphStatsInput) (*Stats, error) {
 	param, err := g.createStatsRequestParameter(input)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to create graph stats request parameter")
 	}
 
-	b, err := doRequest(param)
+	b, err := doRequest(ctx, param)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to do request")
 	}
@@ -271,12 +292,18 @@ func (g *Graph) createStatsRequestParameter(input *GraphStatsInput) (*requestPar
 // Update updates predefined pixelation graph definitions.
 // The items that can be updated are limited as compared with the pixelation graph definition creation.
 func (g *Graph) Update(input *GraphUpdateInput) (*Result, error) {
+	return g.UpdateWithContext(context.Background(), input)
+}
+
+// UpdateWithContext updates predefined pixelation graph definitions.
+// The items that can be updated are limited as compared with the pixelation graph definition creation.
+func (g *Graph) UpdateWithContext(ctx context.Context, input *GraphUpdateInput) (*Result, error) {
 	param, err := g.createUpdateRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create graph update parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // GraphUpdateInput is input of Graph.Update().
@@ -310,12 +337,17 @@ func (g *Graph) createUpdateRequestParameter(input *GraphUpdateInput) (*requestP
 
 // Delete deletes the predefined pixelation graph definition.
 func (g *Graph) Delete(input *GraphDeleteInput) (*Result, error) {
+	return g.DeleteWithContext(context.Background(), input)
+}
+
+// DeleteWithContext deletes the predefined pixelation graph definition.
+func (g *Graph) DeleteWithContext(ctx context.Context, input *GraphDeleteInput) (*Result, error) {
 	param, err := g.createDeleteRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create graph delete parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // GraphDeleteInput is input of Graph.Delete().
@@ -350,12 +382,31 @@ func (g *Graph) createDeleteRequestParameter(input *GraphDeleteInput) (*requestP
 // You will get a list you specify.
 // You can not specify a period greater than 365 days.
 func (g *Graph) GetPixelDates(input *GraphGetPixelDatesInput) (*Pixels, error) {
+	return g.GetPixelDatesWithContext(context.Background(), input)
+}
+
+// GetPixelDatesWithContext gets a Date list of Pixel registered in the graph specified by graphID.
+// You can specify a period with from and to parameters.
+//
+// If you do not specify both from and to;
+// You will get a list of 365 days ago from today.
+//
+// If you specify from only;
+// You will get a list of 365 days from from date.
+//
+// If you specify to only;
+// You will get a list of 365 days ago from to date.
+//
+// If you specify both from andto;
+// You will get a list you specify.
+// You can not specify a period greater than 365 days.
+func (g *Graph) GetPixelDatesWithContext(ctx context.Context, input *GraphGetPixelDatesInput) (*Pixels, error) {
 	param, err := g.createGetPixelDatesRequestParameter(input)
 	if err != nil {
 		return &Pixels{}, errors.Wrapf(err, "failed to create get pixel dates parameter")
 	}
 
-	b, err := doRequest(param)
+	b, err := doRequest(ctx, param)
 	if err != nil {
 		return &Pixels{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -458,12 +509,17 @@ func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInp
 
 // Stopwatch start and end the measurement of the time.
 func (g *Graph) Stopwatch(input *GraphStopwatchInput) (*Result, error) {
+	return g.StopwatchWithContext(context.Background(), input)
+}
+
+// StopwatchWithContext start and end the measurement of the time.
+func (g *Graph) StopwatchWithContext(ctx context.Context, input *GraphStopwatchInput) (*Result, error) {
 	param, err := g.createStopwatchRequestParameter(input)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to create graph stopwatch parameter")
 	}
 
-	return doRequestAndParseResponse(param)
+	return doRequestAndParseResponse(ctx, param)
 }
 
 // GraphStopwatchInput is input of Graph.Stopwatch().
@@ -484,12 +540,17 @@ func (g *Graph) createStopwatchRequestParameter(input *GraphStopwatchInput) (*re
 
 // Get gets predefined pixelation graph definitions.
 func (g *Graph) Get(input *GraphGetInput) (*GraphDefinition, error) {
+	return g.GetWithContext(context.Background(), input)
+}
+
+// GetWithContext gets predefined pixelation graph definitions.
+func (g *Graph) GetWithContext(ctx context.Context, input *GraphGetInput) (*GraphDefinition, error) {
 	param, err := g.createGetRequestParameter(input)
 	if err != nil {
 		return &GraphDefinition{}, errors.Wrapf(err, "failed to create get graph parameter")
 	}
 
-	b, err := doRequest(param)
+	b, err := doRequest(ctx, param)
 	if err != nil {
 		return &GraphDefinition{}, errors.Wrapf(err, "failed to do request")
 	}
