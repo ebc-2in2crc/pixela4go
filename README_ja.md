@@ -28,8 +28,9 @@ $ go get -u github.com/ebc-2in2crc/pixela4go
 package main
 
 import (
+	"context"
 	"log"
-	
+
 	"github.com/ebc-2in2crc/pixela4go"
 )
 
@@ -42,7 +43,7 @@ func main() {
 		NotMinor:            pixela.Bool(true),
 		ThanksCode:          pixela.String("thanks-code"),
 	}
-	result, err := client.User().Create(uci)
+	result, err := client.User().CreateWithContext(context.Background(), uci)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -60,7 +61,7 @@ func main() {
 		ContributeURLs:    []string{},
 		PinnedGraphID:     pixela.String("pinned-graph-id"),
 	}
-	result, err = client.UserProfile().Update(upi)
+	result, err = client.UserProfile().UpdateWithContext(context.Background(), upi)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -80,7 +81,7 @@ func main() {
 		IsSecret:            pixela.Bool(true),
 		PublishOptionalData: pixela.Bool(true),
 	}
-	result, err = client.Graph().Create(gci)
+	result, err = client.Graph().CreateWithContext(context.Background(), gci)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -90,11 +91,11 @@ func main() {
 
 	// 値をピクセルに記録する
 	pci := &pixela.PixelCreateInput{
-		Date:         pixela.String("20180915"),
-		Quantity:     pixela.String("5"),
-		GraphID:      pixela.String("graph-id"),
+		Date:     pixela.String("20180915"),
+		Quantity: pixela.String("5"),
+		GraphID:  pixela.String("graph-id"),
 	}
-	result, err = client.Pixel().Create(pci)
+	result, err = client.Pixel().CreateWithContext(context.Background(), pci)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -107,7 +108,7 @@ func main() {
 		GraphID: pixela.String("graph-id"),
 		Type:    pixela.String(pixela.WebhookTypeIncrement),
 	}
-	webhook, err := client.Webhook().Create(wci)
+	webhook, err := client.Webhook().CreateWithContext(context.Background(), wci)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -117,7 +118,7 @@ func main() {
 
 	// webhook を呼び出す
 	wii := &pixela.WebhookInvokeInput{WebhookHash: pixela.String("webhook-hash")}
-	result, err = client.Webhook().Invoke(wii)
+	result, err = client.Webhook().InvokeWithContext(context.Background(), wii)
 	if err != nil {
 		log.Fatal(err)
 	}
