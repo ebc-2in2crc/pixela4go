@@ -41,8 +41,9 @@ func testSuccess(t *testing.T, actual *Result, err error) {
 	}
 
 	expect := &Result{
-		Message:   "Success.",
-		IsSuccess: true,
+		Message:    "Success.",
+		IsSuccess:  true,
+		StatusCode: http.StatusOK,
 	}
 	if *actual != *expect {
 		t.Errorf("got: %v\nwant: %v", actual, expect)
@@ -62,8 +63,9 @@ func testAPIFailedResult(t *testing.T, result *Result, err error) {
 	}
 
 	expect := &Result{
-		Message:   "failed.",
-		IsSuccess: false,
+		Message:    "failed.",
+		IsSuccess:  false,
+		StatusCode: http.StatusNotFound,
 	}
 	if *result != *expect {
 		t.Errorf("got: %v\nwant: %v", result, expect)
@@ -83,7 +85,7 @@ func testPageNotFoundError(t *testing.T, err error) {
 		t.Errorf("got: nil\nwant: %s", expect)
 	}
 
-	if err != nil && strings.HasPrefix(err.Error(), expect) == false {
+	if err != nil && strings.Contains(err.Error(), expect) == false {
 		t.Errorf("got: %s\nwant: %s", err.Error(), expect)
 	}
 }

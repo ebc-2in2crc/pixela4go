@@ -30,8 +30,9 @@ type requestParameter struct {
 
 // Result is Pixela API Result struct.
 type Result struct {
-	Message   string `json:"message"`
-	IsSuccess bool   `json:"isSuccess"`
+	Message    string `json:"message"`
+	IsSuccess  bool   `json:"isSuccess"`
+	StatusCode int    `json:"statusCode"`
 }
 
 func newHTTPRequest(ctx context.Context, param *requestParameter) (*http.Request, error) {
@@ -53,10 +54,10 @@ func newHTTPRequest(ctx context.Context, param *requestParameter) (*http.Request
 	return req, nil
 }
 
-func doRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
+func doRequest(ctx context.Context, param *requestParameter) ([]byte, int, error) {
 	req, err := newHTTPRequest(ctx, param)
 	if err != nil {
-		return []byte{}, errors.Wrap(err, "failed to create http.Request")
+		return []byte{}, 0, errors.Wrap(err, "failed to create http.Request")
 	}
 
 	client := http.Client{}
@@ -65,16 +66,16 @@ func doRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
 		resp, err = clientMock.do(req)
 	}
 	if err != nil {
-		return []byte{}, errors.Wrapf(err, "failed http.Client do")
+		return []byte{}, 0, errors.Wrapf(err, "failed http.Client do")
 	}
 	defer resp.Body.Close()
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return []byte{}, errors.Wrapf(err, "failed to read response body")
+		return []byte{}, 0, errors.Wrapf(err, "failed to read response body")
 	}
 
-	return b, nil
+	return b, resp.StatusCode, nil
 }
 
 func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
@@ -126,7 +127,12 @@ func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*R
 		return &Result{}, errors.Wrapf(err, "failed to read response body")
 	}
 
-	return parseNormalResponse(b)
+	r, err := parseNormalResponse(b)
+	if err != nil {
+		return &Result{}, errors.Wrapf(err, "failed to parse normal response")
+	}
+	r.StatusCode = resp.StatusCode
+	return r, nil
 }
 
 func parseNormalResponse(b []byte) (*Result, error) {

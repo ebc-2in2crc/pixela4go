@@ -102,12 +102,13 @@ func (g *Graph) GetAllWithContext(ctx context.Context) (*GraphDefinitions, error
 		return &GraphDefinitions{}, errors.Wrapf(err, "failed to create get all graph parameter")
 	}
 
-	b, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, param)
 	if err != nil {
 		return &GraphDefinitions{}, errors.Wrapf(err, "failed to do request")
 	}
 
 	var definitions GraphDefinitions
+	definitions.StatusCode = status
 	if err := json.Unmarshal(b, &definitions); err != nil {
 		return &GraphDefinitions{}, errors.Wrapf(err, "failed to unmarshal json")
 	}
@@ -259,12 +260,13 @@ func (g *Graph) StatsWithContext(ctx context.Context, input *GraphStatsInput) (*
 		return nil, errors.Wrapf(err, "failed to create graph stats request parameter")
 	}
 
-	b, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, param)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to do request")
 	}
 
 	var stats Stats
+	stats.StatusCode = status
 	if err := json.Unmarshal(b, &stats); err != nil {
 		return nil, errors.Wrapf(err, "failed to unmarshal json")
 	}
@@ -406,7 +408,7 @@ func (g *Graph) GetPixelDatesWithContext(ctx context.Context, input *GraphGetPix
 		return &Pixels{}, errors.Wrapf(err, "failed to create get pixel dates parameter")
 	}
 
-	b, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, param)
 	if err != nil {
 		return &Pixels{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -416,6 +418,7 @@ func (g *Graph) GetPixelDatesWithContext(ctx context.Context, input *GraphGetPix
 		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
 	}
 
+	pixels.StatusCode = status
 	pixels.IsSuccess = pixels.Message == ""
 	return pixels, nil
 }
@@ -550,12 +553,13 @@ func (g *Graph) GetWithContext(ctx context.Context, input *GraphGetInput) (*Grap
 		return &GraphDefinition{}, errors.Wrapf(err, "failed to create get graph parameter")
 	}
 
-	b, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, param)
 	if err != nil {
 		return &GraphDefinition{}, errors.Wrapf(err, "failed to do request")
 	}
 
 	var definition GraphDefinition
+	definition.StatusCode = status
 	if err := json.Unmarshal(b, &definition); err != nil {
 		return &GraphDefinition{}, errors.Wrapf(err, "failed to unmarshal json")
 	}

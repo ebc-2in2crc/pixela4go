@@ -1,6 +1,9 @@
 package pixela
 
-import "testing"
+import (
+	"net/http"
+	"testing"
+)
 
 const (
 	pixelDate     = "20200101"
@@ -21,6 +24,9 @@ func testE2EPixelCreate(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Pixel.Create() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Pixel.Create() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EPixelIncrement(t *testing.T) {
@@ -32,6 +38,9 @@ func testE2EPixelIncrement(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Pixel.Increment() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Pixel.Increment() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EPixelDecrement(t *testing.T) {
@@ -42,6 +51,9 @@ func testE2EPixelDecrement(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Pixel.Decrement() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Pixel.Decrement() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 }
 
@@ -58,6 +70,9 @@ func testE2EPixelUpdate(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Pixel.Update() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Pixel.Update() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EPixelGet(t *testing.T) {
@@ -71,6 +86,9 @@ func testE2EPixelGet(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Pixel.Get() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Pixel.Get() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 	if result.Quantity != pixelQuantity {
 		t.Errorf("Pixel.Get() got: %s\nwant: %s", result.Quantity, pixelQuantity)
@@ -88,5 +106,8 @@ func testE2EPixelDelete(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Pixel.Delete() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Pixel.Delete() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 }

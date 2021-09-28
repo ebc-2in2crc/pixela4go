@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"net/http"
 	"reflect"
 	"strings"
 	"testing"
@@ -23,6 +24,9 @@ func testE2EGraphCreate(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Graph.Create() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.Create() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EGraphUpdate(t *testing.T) {
@@ -37,6 +41,9 @@ func testE2EGraphUpdate(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Graph.Update() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.Update() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EGraphGetAll(t *testing.T) {
@@ -46,6 +53,9 @@ func testE2EGraphGetAll(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Graph.GetAll() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.GetAll() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 	expected := []GraphDefinition{
 		{
@@ -72,6 +82,9 @@ func testE2EGraphGet(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Graph.Get() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.Get() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 	expected := &GraphDefinition{
 		ID:             graphID,
 		Name:           "graph-name",
@@ -81,8 +94,9 @@ func testE2EGraphGet(t *testing.T) {
 		TimeZone:       "Asia/Tokyo",
 		SelfSufficient: GraphSelfSufficientIncrement,
 		Result: Result{
-			IsSuccess: true,
-			Message:   "",
+			IsSuccess:  true,
+			Message:    "",
+			StatusCode: http.StatusOK,
 		},
 	}
 	if reflect.DeepEqual(result, expected) == false {
@@ -108,6 +122,9 @@ func invokeGraphStopwatch(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Graph.Stopwatch() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.Stopwatch() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EGraphGetPixelDates(t *testing.T) {
@@ -120,6 +137,9 @@ func testE2EGraphGetPixelDates(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Graph.GetPixelDates() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.GetPixelDates() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 	pixels, ok := result.Pixels.([]string)
 	if ok == false {
@@ -150,6 +170,9 @@ func testE2EGraphStats(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Graph.Stats() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.Stats() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 	if result.TotalPixelsCount != 1 {
 		t.Errorf("Graph.Stats().TotalPixelsCount got: %+v\nwant: 1", result.TotalPixelsCount)
 	}
@@ -163,5 +186,8 @@ func testE2EGraphDelete(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Graph.Create() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.Delete() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 }
