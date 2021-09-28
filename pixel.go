@@ -134,12 +134,13 @@ func (p *Pixel) GetWithContext(ctx context.Context, input *PixelGetInput) (*Quan
 		return &Quantity{}, errors.Wrapf(err, "failed to create pixel get parameter")
 	}
 
-	b, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, param)
 	if err != nil {
 		return &Quantity{}, errors.Wrapf(err, "failed to do request")
 	}
 
 	var quantity Quantity
+	quantity.StatusCode = status
 	if err := json.Unmarshal(b, &quantity); err != nil {
 		return &Quantity{}, errors.Wrapf(err, "failed to unmarshal json")
 	}

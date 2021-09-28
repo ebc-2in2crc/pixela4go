@@ -225,7 +225,7 @@ func TestPixel_Get(t *testing.T) {
 	expect := &Quantity{
 		Quantity:     "5",
 		OptionalData: "{\"key\":\"value\"}",
-		Result:       Result{IsSuccess: true},
+		Result:       Result{IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if *quantity != *expect {
 		t.Errorf("got: %v\nwant: %v", quantity, expect)

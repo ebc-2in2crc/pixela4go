@@ -27,12 +27,13 @@ func (w *Webhook) CreateWithContext(ctx context.Context, input *WebhookCreateInp
 		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to create webhook create parameter")
 	}
 
-	b, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, param)
 	if err != nil {
 		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to do request")
 	}
 
 	var createResult WebhookCreateResult
+	createResult.StatusCode = status
 	if err := json.Unmarshal(b, &createResult); err != nil {
 		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to unmarshal json")
 	}
@@ -87,12 +88,13 @@ func (w *Webhook) GetAllWithContext(ctx context.Context) (*WebhookDefinitions, e
 		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to create get all webhooks parameter")
 	}
 
-	b, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, param)
 	if err != nil {
 		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to do request")
 	}
 
 	var definitions WebhookDefinitions
+	definitions.StatusCode = status
 	if err := json.Unmarshal(b, &definitions); err != nil {
 		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to unmarshal json")
 	}

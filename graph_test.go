@@ -157,7 +157,7 @@ func TestGraph_GetAll(t *testing.T) {
 				PublishOptionalData: true,
 			},
 		},
-		Result: Result{IsSuccess: true},
+		Result: Result{IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if reflect.DeepEqual(definitions, expect) == false {
 		t.Errorf("got: %v\nwant: %v", definitions, expect)
@@ -321,7 +321,7 @@ func TestGraph_Stats(t *testing.T) {
 		TotalQuantity:    4,
 		AvgQuantity:      5.0,
 		TodaysQuantity:   6,
-		Result:           Result{IsSuccess: true},
+		Result:           Result{IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if *stats != *expect {
 		t.Errorf("got: %v\nwant: %v", stats, expect)
@@ -551,7 +551,7 @@ func TestGraph_GetPixelDates(t *testing.T) {
 
 	expect := &Pixels{
 		Pixels: []string{"20180101", "20180331"},
-		Result: Result{IsSuccess: true},
+		Result: Result{IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if reflect.DeepEqual(pixels, expect) == false {
 		t.Errorf("got: %v\nwant: %v", pixels, expect)
@@ -583,7 +583,7 @@ func TestGraph_GetPixelDatesWithBody(t *testing.T) {
 				OptionalData: "{\"key\":\"value\"}",
 			},
 		},
-		Result: Result{IsSuccess: true},
+		Result: Result{IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if reflect.DeepEqual(pixels, expect) == false {
 		t.Errorf("got: %v\nwant: %v", pixels, expect)
@@ -721,7 +721,7 @@ func TestGraph_Get(t *testing.T) {
 		SelfSufficient:      "increment",
 		IsSecret:            true,
 		PublishOptionalData: true,
-		Result:              Result{IsSuccess: true},
+		Result:              Result{IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if reflect.DeepEqual(definition, expect) == false {
 		t.Errorf("got: %v\nwant: %v", definition, expect)

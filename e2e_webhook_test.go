@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"net/http"
 	"reflect"
 	"testing"
 )
@@ -19,6 +20,9 @@ func testE2EWebhookCreate(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Webhook.Create() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Webhook.Create() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 
 	webhookHash = result.WebhookHash
 }
@@ -32,6 +36,9 @@ func testE2EWebhookInvoke(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("Webhook.Invoke() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Webhook.Invoke() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EWebhookGetAll(t *testing.T) {
@@ -41,6 +48,9 @@ func testE2EWebhookGetAll(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Webhook.GetAll() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Webhook.GetAll() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 	expected := []WebhookDefinition{
 		{
@@ -62,5 +72,8 @@ func testE2EWebhookDelete(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("Webhook.Delete() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Webhook.Delete() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 }

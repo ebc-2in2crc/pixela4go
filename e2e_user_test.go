@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"net/http"
 	"os"
 	"testing"
 )
@@ -17,6 +18,9 @@ func testE2EUserCreate(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("User.Create() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("User.Create() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 }
 
 func testE2EUserUpdate(t *testing.T) {
@@ -31,6 +35,9 @@ func testE2EUserUpdate(t *testing.T) {
 	if result.IsSuccess == false {
 		t.Errorf("User.Update() got: %+v\nwant: true", result)
 	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("User.Update() got: %+v\nwant: %d", result, http.StatusOK)
+	}
 
 	e2eClient.Token = newToken
 }
@@ -42,5 +49,8 @@ func testE2EUserDelete(t *testing.T) {
 	}
 	if result.IsSuccess == false {
 		t.Errorf("User.Delete() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("User.Delete() got: %+v\nwant: %d", result, http.StatusOK)
 	}
 }

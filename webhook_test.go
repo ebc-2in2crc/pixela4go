@@ -56,7 +56,7 @@ func TestWebhook_Create(t *testing.T) {
 
 	expect := &WebhookCreateResult{
 		WebhookHash: "webhook-hash",
-		Result:      Result{Message: "Success.", IsSuccess: true},
+		Result:      Result{Message: "Success.", IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if *result != *expect {
 		t.Errorf("got: %v\nwant: %v", result, expect)
@@ -133,7 +133,7 @@ func TestWebhook_GetAll(t *testing.T) {
 				Type:        "increment",
 			},
 		},
-		Result: Result{IsSuccess: true},
+		Result: Result{IsSuccess: true, StatusCode: http.StatusOK},
 	}
 	if reflect.DeepEqual(definitions, expect) == false {
 		t.Errorf("got: %v\nwant: %v", definitions, expect)
