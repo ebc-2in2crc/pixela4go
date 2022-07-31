@@ -3,8 +3,8 @@
 GOCMD := env GO111MODULE=on go
 GOMOD := $(GOCMD) mod
 GOCLEAN := $(GOCMD) clean
+GOINSTALL := $(GOCMD) install
 GOTEST := $(GOCMD) test
-GOGET := $(GOCMD) get
 
 .PHONY: deps
 ## Install dependencies
@@ -14,13 +14,9 @@ deps:
 .PHONY: devel-deps
 ## Install dependencies for develop
 devel-deps: deps
-	sh -c '\
-	tmpdir=$$(mktemp -d); \
-	cd $$tmpdir; \
-	$(GOGET) golang.org/x/tools/cmd/goimports \
-		golang.org/x/lint/golint \
-		github.com/Songmu/make2help/cmd/make2help; \
-	rm -rf $$tmpdir'
+	$(GOINSTALL) golang.org/x/tools/cmd/goimports@latest
+	$(GOINSTALL) golang.org/x/lint/golint@latest
+	$(GOINSTALL) github.com/Songmu/make2help/cmd/make2help@latest
 
 .PHONY: test
 ## Run tests
