@@ -55,27 +55,46 @@ func newHTTPRequest(ctx context.Context, param *requestParameter) (*http.Request
 }
 
 func doRequest(ctx context.Context, param *requestParameter) ([]byte, int, error) {
-	req, err := newHTTPRequest(ctx, param)
-	if err != nil {
-		return []byte{}, 0, errors.Wrap(err, "failed to create http.Request")
+	retry := retryer{
+		processFunc: processFunc(ctx, param),
+		maxRetry:    getRetryCount(),
+	}
+	if err := retry.do(); err != nil {
+		return []byte{}, 0, err
 	}
 
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if clientMock != nil {
-		resp, err = clientMock.do(req)
-	}
-	if err != nil {
-		return []byte{}, 0, errors.Wrapf(err, "failed http.Client do")
-	}
-	defer resp.Body.Close()
+	return retry.body, retry.statusCode, nil
+}
 
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return []byte{}, 0, errors.Wrapf(err, "failed to read response body")
-	}
+func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) {
+	return func(m *retryer) {
+		req, err := newHTTPRequest(ctx, param)
+		if err != nil {
+			m.err = errors.Wrap(err, "failed to create http.Request")
+			return
+		}
 
-	return b, resp.StatusCode, nil
+		client := http.Client{}
+		resp, err := client.Do(req)
+		if clientMock != nil {
+			resp, err = clientMock.do(req)
+		}
+		if err != nil {
+			m.err = errors.Wrapf(err, "failed http.Client do")
+			return
+		}
+		defer resp.Body.Close()
+
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			m.err = errors.Wrapf(err, "failed to read response body")
+			return
+		}
+
+		m.body = b
+		m.statusCode = resp.StatusCode
+		m.err = nil
+	}
 }
 
 func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
@@ -107,31 +126,20 @@ func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error)
 }
 
 func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*Result, error) {
-	req, err := newHTTPRequest(ctx, param)
-	if err != nil {
-		return &Result{}, errors.Wrap(err, "failed to create http.Request")
+	retry := retryer{
+		processFunc: processFunc(ctx, param),
+		maxRetry:    getRetryCount(),
+	}
+	if err := retry.do(); err != nil {
+		return &Result{}, err
 	}
 
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if clientMock != nil {
-		resp, err = clientMock.do(req)
-	}
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed http.Client do")
-	}
-	defer resp.Body.Close()
-
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to read response body")
-	}
-
-	r, err := parseNormalResponse(b)
+	r, err := parseNormalResponse(retry.body)
 	if err != nil {
 		return &Result{}, errors.Wrapf(err, "failed to parse normal response")
 	}
-	r.StatusCode = resp.StatusCode
+
+	r.StatusCode = retry.statusCode
 	return r, nil
 }
 
