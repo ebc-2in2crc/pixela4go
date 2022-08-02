@@ -31,10 +31,14 @@ import (
 	"context"
 	"log"
 
-	"github.com/ebc-2in2crc/pixela4go"
+	pixela "github.com/ebc-2in2crc/pixela4go"
 )
 
 func main() {
+	// Specify the number of retries if you want to retry when the API call is rejected.
+	// If you do not want to retry, you do not need to specify it.
+	pixela.RetryCount = 10
+	
 	client := pixela.New("YOUR_NAME", "YOUR_TOKEN")
 
 	// Create new user

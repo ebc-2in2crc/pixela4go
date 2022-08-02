@@ -31,10 +31,14 @@ import (
 	"context"
 	"log"
 
-	"github.com/ebc-2in2crc/pixela4go"
+	pixela "github.com/ebc-2in2crc/pixela4go"
 )
 
 func main() {
+	// API 呼び出しが拒否されたときにリトライする場合、リトライ回数を指定します。
+	// もしリトライしないなら指定する必要はありません。
+	pixela.RetryCount = 10
+	
 	client := pixela.New("YOUR_NAME", "YOUR_TOKEN")
 
 	// 新しいユーザーを作る
