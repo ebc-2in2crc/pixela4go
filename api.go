@@ -32,6 +32,7 @@ type requestParameter struct {
 type Result struct {
 	Message    string `json:"message"`
 	IsSuccess  bool   `json:"isSuccess"`
+	IsRejected bool   `json:"IsRejected"`
 	StatusCode int    `json:"statusCode"`
 }
 
