@@ -3,7 +3,6 @@ package pixela
 import (
 	"math"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -58,7 +57,7 @@ func (m *retryer) shouldRetry() bool {
 		return false
 	}
 
-	return strings.HasPrefix(r.Message, "Please retry this request")
+	return r.IsRejected
 }
 
 func (m *retryer) getWaitTimeExp(retryCount int, baseDelayMilliSeconds int) (delayMilliSeconds int) {
