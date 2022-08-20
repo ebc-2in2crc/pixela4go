@@ -60,7 +60,7 @@ func doRequest(ctx context.Context, param *requestParameter) ([]byte, int, error
 		processFunc: processFunc(ctx, param),
 		maxRetry:    getRetryCount(),
 	}
-	if err := retry.do(); err != nil {
+	if err := retry.do(ctx); err != nil {
 		return []byte{}, 0, err
 	}
 
@@ -131,7 +131,7 @@ func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*R
 		processFunc: processFunc(ctx, param),
 		maxRetry:    getRetryCount(),
 	}
-	if err := retry.do(); err != nil {
+	if err := retry.do(ctx); err != nil {
 		return &Result{}, err
 	}
 
