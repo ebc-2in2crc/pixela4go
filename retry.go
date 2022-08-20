@@ -1,6 +1,7 @@
 package pixela
 
 import (
+	"context"
 	"math"
 	"net/http"
 	"time"
@@ -25,7 +26,7 @@ type retryer struct {
 	err         error
 }
 
-func (m *retryer) do() error {
+func (m *retryer) do(ctx context.Context) error {
 	for i := 0; i <= m.maxRetry; i++ {
 		m.process()
 		if !m.shouldRetry() {
@@ -33,7 +34,11 @@ func (m *retryer) do() error {
 		}
 
 		waitTime := m.getWaitTimeExp(i, 100)
-		time.Sleep(time.Millisecond * time.Duration(waitTime))
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(time.Millisecond * time.Duration(waitTime)):
+		}
 	}
 
 	return ErrAPICallRejected
