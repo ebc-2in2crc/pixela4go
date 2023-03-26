@@ -692,7 +692,6 @@ func TestGraph_CreateGetRequestParameter(t *testing.T) {
 	if param.Header[userToken] != token {
 		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
 	}
-
 	if bytes.Equal(param.Body, []byte{}) == false {
 		t.Errorf("Body: %s\nwant: \"\"", string(param.Body))
 	}
@@ -747,6 +746,76 @@ func TestGraph_GetError(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphGetInput{ID: String(graphID)}
 	_, err := client.Graph().Get(input)
+
+	testPageNotFoundError(t, err)
+}
+
+func TestGraph_CreateAddRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &GraphAddInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	param, err := client.Graph().createAddRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodPut {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/add", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	s := `{"quantity":"1"}`
+	b := []byte(s)
+	if bytes.Equal(param.Body, b) == false {
+		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
+	}
+}
+
+func TestGraph_Add(t *testing.T) {
+	clientMock = newOKMock()
+
+	client := New(userName, token)
+	input := &GraphAddInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	result, err := client.Graph().Add(input)
+
+	testSuccess(t, result, err)
+}
+
+func TestGraph_AddFail(t *testing.T) {
+	clientMock = newAPIFailedMock()
+
+	client := New(userName, token)
+	input := &GraphAddInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	result, err := client.Graph().Add(input)
+
+	testAPIFailedResult(t, result, err)
+}
+
+func TestGraph_AddError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &GraphAddInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	_, err := client.Graph().Add(input)
 
 	testPageNotFoundError(t, err)
 }
