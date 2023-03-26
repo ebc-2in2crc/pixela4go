@@ -819,3 +819,73 @@ func TestGraph_AddError(t *testing.T) {
 
 	testPageNotFoundError(t, err)
 }
+
+func TestGraph_CreateSubtractRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &GraphSubtractInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	param, err := client.Graph().createSubtractRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodPut {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/subtract", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	s := `{"quantity":"1"}`
+	b := []byte(s)
+	if bytes.Equal(param.Body, b) == false {
+		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
+	}
+}
+
+func TestGraph_Subtract(t *testing.T) {
+	clientMock = newOKMock()
+
+	client := New(userName, token)
+	input := &GraphSubtractInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	result, err := client.Graph().Subtract(input)
+
+	testSuccess(t, result, err)
+}
+
+func TestGraph_SubtractFail(t *testing.T) {
+	clientMock = newAPIFailedMock()
+
+	client := New(userName, token)
+	input := &GraphSubtractInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	result, err := client.Graph().Subtract(input)
+
+	testAPIFailedResult(t, result, err)
+}
+
+func TestGraph_SubtractError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &GraphSubtractInput{
+		ID:       String(graphID),
+		Quantity: String("1"),
+	}
+	_, err := client.Graph().Subtract(input)
+
+	testPageNotFoundError(t, err)
+}
