@@ -583,3 +583,79 @@ type GraphGetInput struct {
 	// ID is a required field
 	ID *string `json:"-"`
 }
+
+// Add quantity to the "Pixel" of the day.
+func (g *Graph) Add(input *GraphAddInput) (*Result, error) {
+	return g.AddWithContext(context.Background(), input)
+}
+
+// AddWithContext quantity to the "Pixel" of the day.
+func (g *Graph) AddWithContext(ctx context.Context, input *GraphAddInput) (*Result, error) {
+	param, err := g.createAddRequestParameter(input)
+	if err != nil {
+		return &Result{}, errors.Wrapf(err, "failed to create graph add parameter")
+	}
+
+	return doRequestAndParseResponse(ctx, param)
+}
+
+// GraphAddInput is input of Graph.Add().
+type GraphAddInput struct {
+	// ID is a required field
+	ID *string `json:"-"`
+	// Quantity is a required field
+	Quantity *string `json:"quantity"`
+}
+
+func (g *Graph) createAddRequestParameter(input *GraphAddInput) (*requestParameter, error) {
+	b, err := json.Marshal(input)
+	if err != nil {
+		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+	}
+
+	graphID := StringValue(input.ID)
+	return &requestParameter{
+		Method: http.MethodPut,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/add", g.UserName, graphID),
+		Header: map[string]string{userToken: g.Token},
+		Body:   b,
+	}, nil
+}
+
+// Subtract quantity from the "Pixel" of the day.
+func (g *Graph) Subtract(input *GraphSubtractInput) (*Result, error) {
+	return g.SubtractWithContext(context.Background(), input)
+}
+
+// SubtractWithContext quantity from the "Pixel" of the day.
+func (g *Graph) SubtractWithContext(ctx context.Context, input *GraphSubtractInput) (*Result, error) {
+	param, err := g.createSubtractRequestParameter(input)
+	if err != nil {
+		return &Result{}, errors.Wrapf(err, "failed to create graph add parameter")
+	}
+
+	return doRequestAndParseResponse(ctx, param)
+}
+
+// GraphSubtractInput is input of Graph.Subtract().
+type GraphSubtractInput struct {
+	// ID is a required field
+	ID *string `json:"-"`
+	// Quantity is a required field
+	Quantity *string `json:"quantity"`
+}
+
+func (g *Graph) createSubtractRequestParameter(input *GraphSubtractInput) (*requestParameter, error) {
+	b, err := json.Marshal(input)
+	if err != nil {
+		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+	}
+
+	graphID := StringValue(input.ID)
+	return &requestParameter{
+		Method: http.MethodPut,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/subtract", g.UserName, graphID),
+		Header: map[string]string{userToken: g.Token},
+		Body:   b,
+	}, nil
+}
