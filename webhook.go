@@ -49,7 +49,7 @@ type WebhookCreateInput struct {
 	Type *string `json:"type"`
 }
 
-// Specify the behavior when this Webhook is invoked.:w
+// Specify the behavior when this Webhook is invoked.
 const (
 	WebhookTypeIncrement = "increment"
 	WebhookTypeDecrement = "decrement"
