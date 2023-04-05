@@ -51,9 +51,11 @@ type WebhookCreateInput struct {
 
 // Specify the behavior when this Webhook is invoked.
 const (
+	WebhookTypeAdd       = "add"
 	WebhookTypeIncrement = "increment"
 	WebhookTypeDecrement = "decrement"
 	WebhookTypeStopwatch = "stopwatch"
+	WebhookTypeSubtract  = "subtract"
 )
 
 // WebhookCreateResult is Create() Result struct.
