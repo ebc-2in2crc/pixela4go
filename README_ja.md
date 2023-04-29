@@ -2,6 +2,7 @@
 
 # pixela4go
 
+![CI](https://github.com/ebc-2in2crc/pixela4go/actions/workflows/pr.yml/badge.svg)
 [![Build Status](https://travis-ci.com/ebc-2in2crc/pixela4go.svg?branch=master)](https://travis-ci.com/ebc-2in2crc/pixela4go)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![GoDoc](https://godoc.org/github.com/ebc-2in2crc/pixela4go?status.svg)](https://pkg.go.dev/github.com/ebc-2in2crc/pixela4go)
