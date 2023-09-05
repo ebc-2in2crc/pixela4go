@@ -239,12 +239,15 @@ type GraphURLInput struct {
 
 // Stats is various statistics based on the registered information.
 type Stats struct {
-	TotalPixelsCount int     `json:"totalPixelsCount"`
-	MaxQuantity      int     `json:"maxQuantity"`
-	MinQuantity      int     `json:"minQuantity"`
-	TotalQuantity    int     `json:"totalQuantity"`
-	AvgQuantity      float64 `json:"avgQuantity"`
-	TodaysQuantity   int     `json:"todaysQuantity"`
+	TotalPixelsCount  int     `json:"totalPixelsCount"`
+	MaxQuantity       int     `json:"maxQuantity"`
+	MaxDate           string  `json:"maxDate"`
+	MinQuantity       int     `json:"minQuantity"`
+	MinDate           string  `json:"minDate"`
+	TotalQuantity     int     `json:"totalQuantity"`
+	AvgQuantity       float64 `json:"avgQuantity"`
+	TodaysQuantity    int     `json:"todaysQuantity"`
+	YesterdayQuantity int     `json:"yesterdayQuantity"`
 	Result
 }
 
