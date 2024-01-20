@@ -22,6 +22,7 @@ jobs:
         run: make test
         env:
           PIXELA4GO_E2E_TEST_RUN: ON
+          PIXELA4GO_THANKS_CODE: ${{ secrets.PIXELA4GO_THANKS_CODE }}
           PIXELA4GO_USER_NAME: ${{ secrets.PIXELA4GO_USER_NAME }}
           PIXELA4GO_USER_FIRST_TOKEN: ${{ secrets.PIXELA4GO_USER_FIRST_TOKEN }}
           PIXELA4GO_USER_SECOND_TOKEN: ${{ secrets.PIXELA4GO_USER_SECOND_TOKEN }}
