@@ -37,6 +37,7 @@ If you run E2E test, Set below environment variables.
 	testE2EGraphGetPixelDates(t)
 	testE2EGraphGetSVG(t)
 	testE2EGraphStats(t)
+	testE2EGraphUpdatePixels(t)
 
 	testE2EPixelCreate(t)
 	testE2EPixelIncrement(t)

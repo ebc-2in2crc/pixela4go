@@ -219,6 +219,52 @@ const (
 	GraphAppearanceDark = "dark"
 )
 
+// UpdatePixels is used to register multiple Pixels (quantities for a specific day) at a time.
+func (g *Graph) UpdatePixels(input *GraphUpdatePixelsInput) (*Result, error) {
+	return g.UpdatePixelsWithContext(context.Background(), input)
+}
+
+// UpdatePixelsWithContext is used to register multiple Pixels (quantities for a specific day) at a time.
+func (g *Graph) UpdatePixelsWithContext(ctx context.Context, input *GraphUpdatePixelsInput) (*Result, error) {
+	param, err := g.createUpdatePixelsRequestParameter(input)
+	if err != nil {
+		return &Result{}, errors.Wrapf(err, "failed to create graph update pixels parameter")
+	}
+
+	return doRequestAndParseResponse(ctx, param)
+}
+
+// GraphUpdatePixelsInput is input of Graph.UpdatePixels().
+type GraphUpdatePixelsInput struct {
+	// ID is a required field
+	ID     *string      `json:"-"`
+	Pixels []PixelInput `json:"-"`
+}
+
+// PixelInput is input of Graph.UpdatePixels().
+type PixelInput struct {
+	// Date is a required field
+	Date *string `json:"date"`
+	// Quantity is a required field
+	Quantity     *string `json:"quantity"`
+	OptionalData *string `json:"optionalData,omitempty"`
+}
+
+func (g *Graph) createUpdatePixelsRequestParameter(input *GraphUpdatePixelsInput) (*requestParameter, error) {
+	b, err := json.Marshal(input.Pixels)
+	if err != nil {
+		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+	}
+
+	ID := StringValue(input.ID)
+	return &requestParameter{
+		Method: http.MethodPost,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels", g.UserName, ID),
+		Header: map[string]string{userToken: g.Token},
+		Body:   b,
+	}, nil
+}
+
 // URL displays the details of the graph in html format.
 func (g *Graph) URL(input *GraphURLInput) string {
 	ID := StringValue(input.ID)
