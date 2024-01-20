@@ -10,6 +10,7 @@ func testE2EUserCreate(t *testing.T) {
 	input := &UserCreateInput{
 		AgreeTermsOfService: Bool(true),
 		NotMinor:            Bool(true),
+		ThanksCode:          String(os.Getenv("PIXELA4GO_THANKS_CODE")),
 	}
 	result, err := e2eClient.User().Create(input)
 	if err != nil {
@@ -26,7 +27,8 @@ func testE2EUserCreate(t *testing.T) {
 func testE2EUserUpdate(t *testing.T) {
 	newToken := os.Getenv("PIXELA4GO_USER_SECOND_TOKEN")
 	input := &UserUpdateInput{
-		NewToken: String(newToken),
+		NewToken:   String(newToken),
+		ThanksCode: String(os.Getenv("PIXELA4GO_THANKS_CODE")),
 	}
 	result, err := e2eClient.User().Update(input)
 	if err != nil {
