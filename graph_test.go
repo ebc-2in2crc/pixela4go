@@ -258,6 +258,87 @@ func TestGraph_GetSVGFail(t *testing.T) {
 	}
 }
 
+func TestGraph_CreateUpdatePixelsRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &GraphUpdatePixelsInput{
+		ID: String(graphID),
+		Pixels: []PixelInput{
+			{
+				Date:         String("20180101"),
+				Quantity:     String("1"),
+				OptionalData: nil,
+			},
+			{
+				Date:         String("20180102"),
+				Quantity:     String("2"),
+				OptionalData: String("{\"key\":\"value\"}"),
+			},
+		},
+	}
+	param, err := client.Graph().createUpdatePixelsRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodPost {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	s := `[{"date":"20180101","quantity":"1"},{"date":"20180102","quantity":"2","optionalData":"{\"key\":\"value\"}"}]`
+	b := []byte(s)
+	if bytes.Equal(param.Body, b) == false {
+		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
+	}
+}
+
+func TestGraph_UpdatePixels(t *testing.T) {
+	clientMock = newOKMock()
+
+	client := New(userName, token)
+	input := &GraphUpdatePixelsInput{
+		ID:     String(graphID),
+		Pixels: []PixelInput{},
+	}
+	result, err := client.Graph().UpdatePixels(input)
+
+	testSuccess(t, result, err)
+}
+
+func TestGraph_UpdatePixelsFail(t *testing.T) {
+	clientMock = newAPIFailedMock()
+
+	client := New(userName, token)
+	input := &GraphUpdatePixelsInput{
+		ID:     String(graphID),
+		Pixels: []PixelInput{},
+	}
+	result, err := client.Graph().UpdatePixels(input)
+
+	testAPIFailedResult(t, result, err)
+}
+
+func TestGraph_UpdatePixelsError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &GraphUpdatePixelsInput{
+		ID:     String(graphID),
+		Pixels: []PixelInput{},
+	}
+	_, err := client.Graph().UpdatePixels(input)
+
+	testPageNotFoundError(t, err)
+}
+
 func TestGraph_URL(t *testing.T) {
 	client := New(userName, token)
 	baseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s.html", userName, graphID)

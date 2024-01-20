@@ -178,6 +178,32 @@ func testE2EGraphStats(t *testing.T) {
 	}
 }
 
+func testE2EGraphUpdatePixels(t *testing.T) {
+	input := &GraphUpdatePixelsInput{
+		ID: String(graphID),
+		Pixels: []PixelInput{
+			{
+				Date:     String("20180101"),
+				Quantity: String("1"),
+			},
+			{
+				Date:     String("20180102"),
+				Quantity: String("2"),
+			},
+		},
+	}
+	result, err := e2eClient.Graph().UpdatePixels(input)
+	if err != nil {
+		t.Errorf("Graph.UpdatePixels() got: %+v\nwant: nil", err)
+	}
+	if result.IsSuccess == false {
+		t.Errorf("Graph.UpdatePixels() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.UpdatePixels() got: %+v\nwant: %d", result, http.StatusOK)
+	}
+}
+
 func testE2EGraphDelete(t *testing.T) {
 	input := &GraphDeleteInput{ID: String(graphID)}
 	result, err := e2eClient.Graph().Delete(input)
