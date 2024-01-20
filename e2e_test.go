@@ -14,6 +14,7 @@ func TestE2E(t *testing.T) {
 If you run E2E test, Set below environment variables.
 
 - PIXELA4GO_E2E_TEST_RUN=ON
+- PIXELA4GO_THANKS_CODE=<pixela-thanks-code-for-testing>
 - PIXELA4GO_USER_NAME=<pixela-username-for-testing>
 - PIXELA4GO_USER_FIRST_TOKEN=<pixela-user-token-for-testing>
 - PIXELA4GO_USER_SECOND_TOKEN=<pixela-user-token-for-testing>`
