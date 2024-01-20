@@ -32,7 +32,7 @@ func (p *Pixel) CreateWithContext(ctx context.Context, input *PixelCreateInput) 
 
 // PixelCreateInput is input of Pixel.Create().
 type PixelCreateInput struct {
-	// GraphID is a required filed
+	// GraphID is a required field
 	GraphID *string `json:"-"`
 	// Date is a required field
 	Date *string `json:"date"`
@@ -75,7 +75,7 @@ func (p *Pixel) IncrementWithContext(ctx context.Context, input *PixelIncrementI
 
 // PixelIncrementInput is input of Pixel.Increment().
 type PixelIncrementInput struct {
-	// GraphID is a required filed
+	// GraphID is a required field
 	GraphID *string
 }
 
@@ -108,7 +108,7 @@ func (p *Pixel) DecrementWithContext(ctx context.Context, input *PixelDecrementI
 
 // PixelDecrementInput is input of Pixel.Decrement().
 type PixelDecrementInput struct {
-	// GraphID is a required filed
+	// GraphID is a required field
 	GraphID *string
 }
 
@@ -151,7 +151,7 @@ func (p *Pixel) GetWithContext(ctx context.Context, input *PixelGetInput) (*Quan
 
 // PixelGetInput is input of Pixel.Get().
 type PixelGetInput struct {
-	// GraphID is a required filed
+	// GraphID is a required field
 	GraphID *string
 	// Date is required field.
 	Date *string
@@ -192,7 +192,7 @@ func (p *Pixel) UpdateWithContext(ctx context.Context, input *PixelUpdateInput) 
 
 // PixelUpdateInput is input of Pixel.Update().
 type PixelUpdateInput struct {
-	// GraphID is a required filed
+	// GraphID is a required field
 	GraphID *string `json:"-"`
 	// Date is required field.
 	Date         *string `json:"-"`
@@ -233,7 +233,7 @@ func (p *Pixel) DeleteWithContext(ctx context.Context, input *PixelDeleteInput) 
 
 // PixelDeleteInput is input of Pixel.Delete().
 type PixelDeleteInput struct {
-	// GraphID is a required filed
+	// GraphID is a required field
 	GraphID *string
 	// Date is a required field
 	Date *string
