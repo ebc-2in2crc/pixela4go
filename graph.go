@@ -147,6 +147,57 @@ type GraphDefinition struct {
 	Result
 }
 
+// GetLatestPixel gets the latest Pixel registered in the graph.
+func (g *Graph) GetLatestPixel(input *GraphGetLatestPixelInput) (*GraphPixel, error) {
+	return g.GetLatestPixelWithContext(context.Background(), input)
+}
+
+// GetLatestPixelWithContext gets the latest Pixel registered in the graph.
+func (g *Graph) GetLatestPixelWithContext(ctx context.Context, input *GraphGetLatestPixelInput) (*GraphPixel, error) {
+	param, err := g.createGetLatestPixelRequestParameter(input)
+	if err != nil {
+		return &GraphPixel{}, errors.Wrapf(err, "failed to create get latest pixel parameter")
+	}
+
+	b, status, err := doRequest(ctx, param)
+	if err != nil {
+		return &GraphPixel{}, errors.Wrapf(err, "failed to do request")
+	}
+
+	var pixel GraphPixel
+	pixel.StatusCode = status
+	if err := json.Unmarshal(b, &pixel); err != nil {
+		return &pixel, errors.Wrapf(err, "failed to unmarshal json")
+	}
+
+	pixel.IsSuccess = pixel.StatusCode == http.StatusOK
+	return &pixel, nil
+}
+
+func (g *Graph) createGetLatestPixelRequestParameter(input *GraphGetLatestPixelInput) (*requestParameter, error) {
+	ID := StringValue(input.ID)
+	return &requestParameter{
+		Method: http.MethodGet,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/latest", g.UserName, ID),
+		Header: map[string]string{userToken: g.Token},
+		Body:   []byte{},
+	}, nil
+}
+
+// GraphGetLatestPixelInput is input of Graph.GetLatestPixel().
+type GraphGetLatestPixelInput struct {
+	// ID is a required field
+	ID *string `json:"-"`
+}
+
+// GraphPixel is graph pixel
+type GraphPixel struct {
+	Date         string `json:"date"`
+	Quantity     string `json:"quantity"`
+	OptionalData string `json:"optionalData"`
+	Result
+}
+
 // GetSVG get a graph expressed in SVG format diagram that based on the registered information.
 func (g *Graph) GetSVG(input *GraphGetSVGInput) (string, error) {
 	return g.GetSVGWithContext(context.Background(), input)
