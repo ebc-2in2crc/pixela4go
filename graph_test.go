@@ -185,6 +185,71 @@ func TestGraph_GetAllError(t *testing.T) {
 	testPageNotFoundError(t, err)
 }
 
+func TestGraph_CreateGetLatestPixelRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &GraphGetLatestPixelInput{ID: String(graphID)}
+	param, err := client.Graph().createGetLatestPixelRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodGet {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/latest", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	s := ""
+	b := []byte(s)
+	if bytes.Equal(param.Body, b) == false {
+		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
+	}
+}
+
+func TestGraph_GetLatestPixel(t *testing.T) {
+	s := `{"date":"20240414","quantity":"5","optionalData":"{\"key\":\"value\"}"}`
+	b := []byte(s)
+	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
+
+	client := New(userName, token)
+	input := &GraphGetLatestPixelInput{
+		ID: String(graphID),
+	}
+	pixel, err := client.Graph().GetLatestPixel(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	expect := &GraphPixel{
+		Date:         "20240414",
+		Quantity:     "5",
+		OptionalData: "{\"key\":\"value\"}",
+		Result:       Result{IsSuccess: true, StatusCode: http.StatusOK},
+	}
+	if reflect.DeepEqual(pixel, expect) == false {
+		t.Errorf("got: %v\nwant: %v", pixel, expect)
+	}
+}
+
+func TestGraph_GetLatestPixelError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &GraphGetLatestPixelInput{
+		ID: String(graphID),
+	}
+	_, err := client.Graph().GetLatestPixel(input)
+
+	testPageNotFoundError(t, err)
+}
+
 func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphGetSVGInput{
