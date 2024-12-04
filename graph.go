@@ -46,6 +46,7 @@ type GraphCreateInput struct {
 	SelfSufficient      *string `json:"selfSufficient,omitempty"`
 	IsSecret            *bool   `json:"isSecret,omitempty"`
 	PublishOptionalData *bool   `json:"publishOptionalData,omitempty"`
+	StartOnMonday       *bool   `json:"startOnMonday,omitempty"`
 }
 
 func (g *Graph) createCreateRequestParameter(input *GraphCreateInput) (*requestParameter, error) {
@@ -420,6 +421,7 @@ type GraphUpdateInput struct {
 	SelfSufficient      *string  `json:"selfSufficient,omitempty"`
 	IsSecret            *bool    `json:"isSecret,omitempty"`
 	PublishOptionalData *bool    `json:"publishOptionalData,omitempty"`
+	StartOnMonday       *bool    `json:"startOnMonday,omitempty"`
 }
 
 func (g *Graph) createUpdateRequestParameter(input *GraphUpdateInput) (*requestParameter, error) {

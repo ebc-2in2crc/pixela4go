@@ -60,6 +60,7 @@ func TestGraph_Create(t *testing.T) {
 		SelfSufficient:      String(GraphSelfSufficientIncrement),
 		IsSecret:            Bool(true),
 		PublishOptionalData: Bool(true),
+		StartOnMonday:       Bool(true),
 	}
 	result, err := client.Graph().Create(input)
 
@@ -553,6 +554,7 @@ func TestGraph_Update(t *testing.T) {
 		SelfSufficient:      String(GraphSelfSufficientIncrement),
 		IsSecret:            Bool(true),
 		PublishOptionalData: Bool(true),
+		StartOnMonday:       Bool(true),
 	}
 	result, err := client.Graph().Update(input)
 
