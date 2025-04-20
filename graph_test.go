@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"net/url"
 	"reflect"
 	"testing"
 )
@@ -254,10 +255,12 @@ func TestGraph_GetLatestPixelError(t *testing.T) {
 func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphGetSVGInput{
-		ID:         String(graphID),
-		Date:       String("20180101"),
-		Mode:       String(GraphModeShort),
-		Appearance: String(GraphAppearanceDark),
+		ID:          String(graphID),
+		Date:        String("20180101"),
+		Mode:        String(GraphModeShort),
+		Appearance:  String(GraphAppearanceDark),
+		LessThan:    String("10"),
+		GreaterThan: String("5"),
 	}
 	param, err := client.Graph().createGetSVGRequestParameter(input)
 	if err != nil {
@@ -268,9 +271,42 @@ func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
 	}
 
-	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s?date=20180101&mode=short&appearance=dark", userName, graphID)
-	if param.URL != expect {
-		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	// Parse the actual URL to compare parts independently of query parameter order
+	actualURL, err := url.Parse(param.URL)
+	if err != nil {
+		t.Errorf("Failed to parse actual URL: %v", err)
+	}
+
+	// Create the expected base URL
+	expectedBaseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", userName, graphID)
+
+	// Check that the base URL matches
+	actualBaseURL := actualURL.Scheme + "://" + actualURL.Host + actualURL.Path
+	if actualBaseURL != expectedBaseURL {
+		t.Errorf("Base URL: %s\nwant: %s", actualBaseURL, expectedBaseURL)
+	}
+
+	// Check that all expected query parameters are present with correct values
+	query := actualURL.Query()
+	if query.Get("date") != "20180101" {
+		t.Errorf("date parameter: %s\nwant: %s", query.Get("date"), "20180101")
+	}
+	if query.Get("mode") != "short" {
+		t.Errorf("mode parameter: %s\nwant: %s", query.Get("mode"), "short")
+	}
+	if query.Get("appearance") != "dark" {
+		t.Errorf("appearance parameter: %s\nwant: %s", query.Get("appearance"), "dark")
+	}
+	if query.Get("lessThan") != "10" {
+		t.Errorf("lessThan parameter: %s\nwant: %s", query.Get("lessThan"), "10")
+	}
+	if query.Get("greaterThan") != "5" {
+		t.Errorf("greaterThan parameter: %s\nwant: %s", query.Get("greaterThan"), "5")
+	}
+
+	// Check that there are no unexpected query parameters
+	if len(query) != 5 {
+		t.Errorf("Number of query parameters: %d\nwant: %d", len(query), 5)
 	}
 
 	if param.Header[userToken] != token {
