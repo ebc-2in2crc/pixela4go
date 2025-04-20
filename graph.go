@@ -223,10 +223,12 @@ func (g *Graph) GetSVGWithContext(ctx context.Context, input *GraphGetSVGInput) 
 // GraphGetSVGInput is input of Graph.GetSVG().
 type GraphGetSVGInput struct {
 	// ID is a required field
-	ID         *string `json:"-"`
-	Date       *string `json:"date,omitempty"`
-	Mode       *string `json:"mode,omitempty"`
-	Appearance *string `json:"appearance,omitempty"`
+	ID          *string `json:"-"`
+	Date        *string `json:"date,omitempty"`
+	Mode        *string `json:"mode,omitempty"`
+	Appearance  *string `json:"appearance,omitempty"`
+	LessThan    *string `json:"lessThan,omitempty"`
+	GreaterThan *string `json:"greaterThan,omitempty"`
 }
 
 func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) (*requestParameter, error) {
@@ -252,6 +254,16 @@ func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) (*requestP
 	appearance := StringValue(input.Appearance)
 	if appearance != "" {
 		query.Set("appearance", appearance)
+	}
+
+	lessThan := StringValue(input.LessThan)
+	if lessThan != "" {
+		query.Set("lessThan", lessThan)
+	}
+
+	greaterThan := StringValue(input.GreaterThan)
+	if greaterThan != "" {
+		query.Set("greaterThan", greaterThan)
 	}
 
 	// Add query parameters to URL if any exist

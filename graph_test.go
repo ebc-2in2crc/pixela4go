@@ -255,10 +255,12 @@ func TestGraph_GetLatestPixelError(t *testing.T) {
 func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphGetSVGInput{
-		ID:         String(graphID),
-		Date:       String("20180101"),
-		Mode:       String(GraphModeShort),
-		Appearance: String(GraphAppearanceDark),
+		ID:          String(graphID),
+		Date:        String("20180101"),
+		Mode:        String(GraphModeShort),
+		Appearance:  String(GraphAppearanceDark),
+		LessThan:    String("10"),
+		GreaterThan: String("5"),
 	}
 	param, err := client.Graph().createGetSVGRequestParameter(input)
 	if err != nil {
@@ -295,10 +297,16 @@ func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 	if query.Get("appearance") != "dark" {
 		t.Errorf("appearance parameter: %s\nwant: %s", query.Get("appearance"), "dark")
 	}
+	if query.Get("lessThan") != "10" {
+		t.Errorf("lessThan parameter: %s\nwant: %s", query.Get("lessThan"), "10")
+	}
+	if query.Get("greaterThan") != "5" {
+		t.Errorf("greaterThan parameter: %s\nwant: %s", query.Get("greaterThan"), "5")
+	}
 
 	// Check that there are no unexpected query parameters
-	if len(query) != 3 {
-		t.Errorf("Number of query parameters: %d\nwant: %d", len(query), 3)
+	if len(query) != 5 {
+		t.Errorf("Number of query parameters: %d\nwant: %d", len(query), 5)
 	}
 
 	if param.Header[userToken] != token {
