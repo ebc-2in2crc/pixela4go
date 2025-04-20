@@ -147,7 +147,7 @@ func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*R
 func parseNormalResponse(b []byte) (*Result, error) {
 	var result Result
 	if err := json.Unmarshal(b, &result); err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to unmarshal json: "+string(b))
+		return &Result{}, errors.Wrapf(err, "failed to unmarshal json: %s", string(b))
 	}
 	return &result, nil
 }
