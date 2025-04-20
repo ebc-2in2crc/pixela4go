@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 )
@@ -230,22 +231,37 @@ type GraphGetSVGInput struct {
 
 func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) (*requestParameter, error) {
 	ID := StringValue(input.ID)
+
+	// Create base URL without query parameters
+	baseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", g.UserName, ID)
+
+	// Create url.Values for query parameters
+	query := make(url.Values)
+
+	// Add non-empty parameters to query
 	date := StringValue(input.Date)
 	if date != "" {
-		date = "date=" + date
+		query.Set("date", date)
 	}
+
 	mode := StringValue(input.Mode)
 	if mode != "" {
-		mode = "mode=" + StringValue(input.Mode)
+		query.Set("mode", mode)
 	}
+
 	appearance := StringValue(input.Appearance)
 	if appearance != "" {
-		appearance = "appearance=" + StringValue(input.Appearance)
+		query.Set("appearance", appearance)
+	}
+
+	// Add query parameters to URL if any exist
+	if len(query) > 0 {
+		baseURL = baseURL + "?" + query.Encode()
 	}
 
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s?%s&%s&%s", g.UserName, ID, date, mode, appearance),
+		URL:    baseURL,
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
 	}, nil
