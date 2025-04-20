@@ -252,6 +252,109 @@ func TestGraph_GetLatestPixelError(t *testing.T) {
 	testPageNotFoundError(t, err)
 }
 
+func TestGraph_CreateGetTodayRequestParameter(t *testing.T) {
+	client := New(userName, token)
+
+	// Test with ReturnEmpty = nil
+	input1 := &GraphGetTodayInput{
+		ID: String(graphID),
+	}
+	param1, err := client.Graph().createGetTodayRequestParameter(input1)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param1.Method != http.MethodGet {
+		t.Errorf("request method: %s\nwant: %s", param1.Method, http.MethodGet)
+	}
+
+	expectURL1 := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/today", userName, graphID)
+	if param1.URL != expectURL1 {
+		t.Errorf("URL: %s\nwant: %s", param1.URL, expectURL1)
+	}
+
+	if param1.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param1.Header[userToken], token)
+	}
+
+	if bytes.Equal(param1.Body, []byte{}) == false {
+		t.Errorf("Body: %s\nwant: \"\"", string(param1.Body))
+	}
+
+	// Test with ReturnEmpty = true
+	input2 := &GraphGetTodayInput{
+		ID:          String(graphID),
+		ReturnEmpty: Bool(true),
+	}
+	param2, err := client.Graph().createGetTodayRequestParameter(input2)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	// Parse the actual URL to compare parts independently of query parameter order
+	actualURL, err := url.Parse(param2.URL)
+	if err != nil {
+		t.Errorf("Failed to parse actual URL: %v", err)
+	}
+
+	// Create the expected base URL
+	expectedBaseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/today", userName, graphID)
+
+	// Check that the base URL matches
+	actualBaseURL := actualURL.Scheme + "://" + actualURL.Host + actualURL.Path
+	if actualBaseURL != expectedBaseURL {
+		t.Errorf("Base URL: %s\nwant: %s", actualBaseURL, expectedBaseURL)
+	}
+
+	// Check that all expected query parameters are present with correct values
+	query := actualURL.Query()
+	if query.Get("returnEmpty") != "true" {
+		t.Errorf("returnEmpty parameter: %s\nwant: %s", query.Get("returnEmpty"), "true")
+	}
+
+	// Check that there are no unexpected query parameters
+	if len(query) != 1 {
+		t.Errorf("Number of query parameters: %d\nwant: %d", len(query), 1)
+	}
+}
+
+func TestGraph_GetToday(t *testing.T) {
+	s := `{"date":"20240414","quantity":"5","optionalData":"{\"key\":\"value\"}"}`
+	b := []byte(s)
+	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
+
+	client := New(userName, token)
+	input := &GraphGetTodayInput{
+		ID: String(graphID),
+	}
+	pixel, err := client.Graph().GetToday(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	expect := &GraphPixel{
+		Date:         "20240414",
+		Quantity:     "5",
+		OptionalData: "{\"key\":\"value\"}",
+		Result:       Result{IsSuccess: true, StatusCode: http.StatusOK},
+	}
+	if reflect.DeepEqual(pixel, expect) == false {
+		t.Errorf("got: %v\nwant: %v", pixel, expect)
+	}
+}
+
+func TestGraph_GetTodayError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &GraphGetTodayInput{
+		ID: String(graphID),
+	}
+	_, err := client.Graph().GetToday(input)
+
+	testPageNotFoundError(t, err)
+}
+
 func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphGetSVGInput{

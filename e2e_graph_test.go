@@ -152,6 +152,39 @@ func testE2EGraphGetPixelDates(t *testing.T) {
 	}
 }
 
+func testE2EGraphGetToday(t *testing.T) {
+	// Test with ReturnEmpty = nil (default behavior)
+	input1 := &GraphGetTodayInput{
+		ID: String(graphID),
+	}
+	result1, err := e2eClient.Graph().GetToday(input1)
+	if err != nil {
+		t.Errorf("Graph.GetToday() got: %+v\nwant: nil", err)
+	}
+	if result1.IsSuccess == false {
+		t.Errorf("Graph.GetToday() got: %+v\nwant: true", result1)
+	}
+	if result1.StatusCode != http.StatusOK {
+		t.Errorf("Graph.GetToday() got: %+v\nwant: %d", result1, http.StatusOK)
+	}
+
+	// Test with ReturnEmpty = true
+	input2 := &GraphGetTodayInput{
+		ID:          String(graphID),
+		ReturnEmpty: Bool(true),
+	}
+	result2, err := e2eClient.Graph().GetToday(input2)
+	if err != nil {
+		t.Errorf("Graph.GetToday() with returnEmpty=true got: %+v\nwant: nil", err)
+	}
+	if result2.IsSuccess == false {
+		t.Errorf("Graph.GetToday() with returnEmpty=true got: %+v\nwant: true", result2)
+	}
+	if result2.StatusCode != http.StatusOK {
+		t.Errorf("Graph.GetToday() with returnEmpty=true got: %+v\nwant: %d", result2, http.StatusOK)
+	}
+}
+
 func testE2EGraphGetSVG(t *testing.T) {
 	input := &GraphGetSVGInput{ID: String(graphID)}
 	result, err := e2eClient.Graph().GetSVG(input)

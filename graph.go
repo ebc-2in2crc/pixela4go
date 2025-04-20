@@ -200,6 +200,70 @@ type GraphPixel struct {
 	Result
 }
 
+// GetToday gets the Pixel registered on the day of the request.
+func (g *Graph) GetToday(input *GraphGetTodayInput) (*GraphPixel, error) {
+	return g.GetTodayWithContext(context.Background(), input)
+}
+
+// GetTodayWithContext gets the Pixel registered on the day of the request.
+func (g *Graph) GetTodayWithContext(ctx context.Context, input *GraphGetTodayInput) (*GraphPixel, error) {
+	param, err := g.createGetTodayRequestParameter(input)
+	if err != nil {
+		return &GraphPixel{}, errors.Wrapf(err, "failed to create get today pixel parameter")
+	}
+
+	b, status, err := doRequest(ctx, param)
+	if err != nil {
+		return &GraphPixel{}, errors.Wrapf(err, "failed to do request")
+	}
+
+	var pixel GraphPixel
+	pixel.StatusCode = status
+	if err := json.Unmarshal(b, &pixel); err != nil {
+		return &pixel, errors.Wrapf(err, "failed to unmarshal json")
+	}
+
+	pixel.IsSuccess = pixel.StatusCode == http.StatusOK
+	return &pixel, nil
+}
+
+func (g *Graph) createGetTodayRequestParameter(input *GraphGetTodayInput) (*requestParameter, error) {
+	ID := StringValue(input.ID)
+
+	// Create base URL without query parameters
+	baseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/today", g.UserName, ID)
+
+	// Create url.Values for query parameters
+	query := make(url.Values)
+
+	// Add returnEmpty parameter if it's set to true
+	if input.ReturnEmpty != nil && *input.ReturnEmpty {
+		query.Set("returnEmpty", "true")
+	}
+
+	// Add query parameters to URL if any exist
+	if len(query) > 0 {
+		baseURL = baseURL + "?" + query.Encode()
+	}
+
+	return &requestParameter{
+		Method: http.MethodGet,
+		URL:    baseURL,
+		Header: map[string]string{userToken: g.Token},
+		Body:   []byte{},
+	}, nil
+}
+
+// GraphGetTodayInput is input of Graph.GetToday().
+type GraphGetTodayInput struct {
+	// ID is a required field
+	ID *string `json:"-"`
+	// ReturnEmpty is an optional field
+	// Specifying true for this param will return an empty Pixel instead of 404 Not Found
+	// if the Pixel is unregistered on the day of the request.
+	ReturnEmpty *bool `json:"-"`
+}
+
 // GetSVG get a graph expressed in SVG format diagram that based on the registered information.
 func (g *Graph) GetSVG(input *GraphGetSVGInput) (string, error) {
 	return g.GetSVGWithContext(context.Background(), input)
