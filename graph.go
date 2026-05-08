@@ -855,3 +855,52 @@ func (g *Graph) createSubtractRequestParameter(input *GraphSubtractInput) (*requ
 		Body:   b,
 	}, nil
 }
+
+// Analyze analyzes the graph by AI and returns the result.
+func (g *Graph) Analyze(input *GraphAnalyzeInput) (*GraphAnalysis, error) {
+	return g.AnalyzeWithContext(context.Background(), input)
+}
+
+// AnalyzeWithContext analyzes the graph by AI and returns the result.
+func (g *Graph) AnalyzeWithContext(ctx context.Context, input *GraphAnalyzeInput) (*GraphAnalysis, error) {
+	param, err := g.createAnalyzeRequestParameter(input)
+	if err != nil {
+		return &GraphAnalysis{}, errors.Wrapf(err, "failed to create graph analyze parameter")
+	}
+
+	b, status, err := doRequest(ctx, param)
+	if err != nil {
+		return &GraphAnalysis{}, errors.Wrapf(err, "failed to do request")
+	}
+
+	var analysis GraphAnalysis
+	analysis.StatusCode = status
+	if err := json.Unmarshal(b, &analysis); err != nil {
+		return &analysis, errors.Wrapf(err, "failed to unmarshal json")
+	}
+
+	analysis.IsSuccess = analysis.StatusCode == http.StatusOK
+	return &analysis, nil
+}
+
+// GraphAnalyzeInput is input of Graph.Analyze().
+type GraphAnalyzeInput struct {
+	// ID is a required field
+	ID *string `json:"-"`
+}
+
+// GraphAnalysis is the response of Graph.Analyze().
+type GraphAnalysis struct {
+	Analysis string `json:"analysis"`
+	Result
+}
+
+func (g *Graph) createAnalyzeRequestParameter(input *GraphAnalyzeInput) (*requestParameter, error) {
+	ID := StringValue(input.ID)
+	return &requestParameter{
+		Method: http.MethodGet,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/analyze", g.UserName, ID),
+		Header: map[string]string{userToken: g.Token},
+		Body:   []byte{},
+	}, nil
+}

@@ -241,6 +241,20 @@ func testE2EGraphUpdatePixels(t *testing.T) {
 	}
 }
 
+func testE2EGraphAnalyze(t *testing.T) {
+	input := &GraphAnalyzeInput{ID: String(graphID)}
+	result, err := e2eClient.Graph().Analyze(input)
+	if err != nil {
+		t.Errorf("Graph.Analyze() got: %+v\nwant: nil", err)
+	}
+	if result.IsSuccess == false {
+		t.Errorf("Graph.Analyze() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Graph.Analyze() got: %+v\nwant: %d", result, http.StatusOK)
+	}
+}
+
 func testE2EGraphDelete(t *testing.T) {
 	input := &GraphDeleteInput{ID: String(graphID)}
 	result, err := e2eClient.Graph().Delete(input)
