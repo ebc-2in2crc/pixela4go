@@ -80,8 +80,9 @@ func TestUserCreateError(t *testing.T) {
 func TestCreateUserUpdateRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &UserUpdateInput{
-		NewToken:   String("newtoken"),
-		ThanksCode: String("thanks-code"),
+		NewToken:          String("newtoken"),
+		ThanksCode:        String("thanks-code"),
+		AllowAIProcessing: Bool(true),
 	}
 	param, err := client.User().createUpdateRequestParameter(input)
 	if err != nil {
@@ -101,7 +102,7 @@ func TestCreateUserUpdateRequestParameter(t *testing.T) {
 		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
 	}
 
-	s := `{"newToken":"newtoken","thanksCode":"thanks-code"}`
+	s := `{"newToken":"newtoken","thanksCode":"thanks-code","allowAIProcessing":true}`
 	b := []byte(s)
 	if bytes.Equal(param.Body, b) == false {
 		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
