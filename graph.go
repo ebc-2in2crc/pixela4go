@@ -44,6 +44,7 @@ type GraphCreateInput struct {
 	// Color is a required field
 	Color               *string `json:"color"`
 	TimeZone            *string `json:"timezone,omitempty"`
+	Description         *string `json:"description,omitempty"`
 	SelfSufficient      *string `json:"selfSufficient,omitempty"`
 	IsSecret            *bool   `json:"isSecret,omitempty"`
 	PublishOptionalData *bool   `json:"publishOptionalData,omitempty"`
@@ -509,6 +510,7 @@ type GraphUpdateInput struct {
 	Unit                *string  `json:"unit,omitempty"`
 	Color               *string  `json:"color,omitempty"`
 	TimeZone            *string  `json:"timezone,omitempty"`
+	Description         *string  `json:"description,omitempty"`
 	PurgeCacheURLs      []string `json:"purgeCacheURLs,omitempty"`
 	SelfSufficient      *string  `json:"selfSufficient,omitempty"`
 	IsSecret            *bool    `json:"isSecret,omitempty"`
