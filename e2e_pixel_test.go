@@ -57,6 +57,24 @@ func testE2EPixelDecrement(t *testing.T) {
 	}
 }
 
+func testE2EPixelAdd(t *testing.T) {
+	input := &PixelAddInput{
+		GraphID:  String(graphID),
+		Date:     String(pixelDate),
+		Quantity: String("5"),
+	}
+	result, err := e2eClient.Pixel().Add(input)
+	if err != nil {
+		t.Errorf("Pixel.Add() got: %+v\nwant: nil", err)
+	}
+	if result.IsSuccess == false {
+		t.Errorf("Pixel.Add() got: %+v\nwant: true", result)
+	}
+	if result.StatusCode != http.StatusOK {
+		t.Errorf("Pixel.Add() got: %+v\nwant: %d", result, http.StatusOK)
+	}
+}
+
 func testE2EPixelUpdate(t *testing.T) {
 	input := &PixelUpdateInput{
 		Date:     String(pixelDate),

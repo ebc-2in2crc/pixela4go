@@ -327,6 +327,68 @@ func TestPixel_UpdateError(t *testing.T) {
 	testPageNotFoundError(t, err)
 }
 
+func TestPixel_CreateAddRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &PixelAddInput{
+		GraphID:  String(graphID),
+		Date:     String("20180915"),
+		Quantity: String("5"),
+	}
+	param, err := client.Pixel().createAddRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodPut {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/20180915/add", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	s := `{"quantity":"5"}`
+	b := []byte(s)
+	if bytes.Equal(param.Body, b) == false {
+		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
+	}
+}
+
+func TestPixel_Add(t *testing.T) {
+	clientMock = newOKMock()
+
+	client := New(userName, token)
+	input := &PixelAddInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("5")}
+	result, err := client.Pixel().Add(input)
+
+	testSuccess(t, result, err)
+}
+
+func TestPixel_AddFail(t *testing.T) {
+	clientMock = newAPIFailedMock()
+
+	client := New(userName, token)
+	input := &PixelAddInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("5")}
+	result, err := client.Pixel().Add(input)
+
+	testAPIFailedResult(t, result, err)
+}
+
+func TestPixel_AddError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &PixelAddInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("5")}
+	_, err := client.Pixel().Add(input)
+
+	testPageNotFoundError(t, err)
+}
+
 func TestPixel_CreateDeleteRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &PixelDeleteInput{GraphID: String(graphID), Date: String("20180915")}

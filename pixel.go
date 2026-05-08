@@ -216,6 +216,47 @@ func (p *Pixel) createUpdateRequestParameter(input *PixelUpdateInput) (*requestP
 	}, nil
 }
 
+// Add adds the specified quantity to the "Pixel" of the specified date.
+func (p *Pixel) Add(input *PixelAddInput) (*Result, error) {
+	return p.AddWithContext(context.Background(), input)
+}
+
+// AddWithContext adds the specified quantity to the "Pixel" of the specified date.
+func (p *Pixel) AddWithContext(ctx context.Context, input *PixelAddInput) (*Result, error) {
+	param, err := p.createAddRequestParameter(input)
+	if err != nil {
+		return &Result{}, errors.Wrapf(err, "failed to create pixel add parameter")
+	}
+
+	return doRequestAndParseResponse(ctx, param)
+}
+
+// PixelAddInput is input of Pixel.Add().
+type PixelAddInput struct {
+	// GraphID is a required field
+	GraphID *string `json:"-"`
+	// Date is a required field
+	Date *string `json:"-"`
+	// Quantity is a required field
+	Quantity *string `json:"quantity"`
+}
+
+func (p *Pixel) createAddRequestParameter(input *PixelAddInput) (*requestParameter, error) {
+	b, err := json.Marshal(input)
+	if err != nil {
+		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+	}
+
+	graphID := StringValue(input.GraphID)
+	date := StringValue(input.Date)
+	return &requestParameter{
+		Method: http.MethodPut,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s/add", p.UserName, graphID, date),
+		Header: map[string]string{userToken: p.Token},
+		Body:   b,
+	}, nil
+}
+
 // Delete deletes the registered "Pixel".
 func (p *Pixel) Delete(input *PixelDeleteInput) (*Result, error) {
 	return p.DeleteWithContext(context.Background(), input)
