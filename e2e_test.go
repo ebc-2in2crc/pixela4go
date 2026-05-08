@@ -43,6 +43,8 @@ If you run E2E test, Set below environment variables.
 	testE2EPixelCreate(t)
 	testE2EPixelIncrement(t)
 	testE2EPixelDecrement(t)
+	testE2EPixelAdd(t)
+	testE2EPixelSubtract(t)
 	testE2EPixelUpdate(t)
 	testE2EPixelGet(t)
 	testE2EPixelDelete(t)
