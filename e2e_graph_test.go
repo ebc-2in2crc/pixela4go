@@ -15,6 +15,7 @@ func testE2EGraphCreate(t *testing.T) {
 		Type:           String(GraphTypeInt),
 		Color:          String(GraphColorShibafu),
 		TimeZone:       String("Asia/Tokyo"),
+		Description:    String("graph description"),
 		SelfSufficient: String(GraphSelfSufficientIncrement),
 		StartOnMonday:  Bool(true),
 	}
@@ -34,6 +35,7 @@ func testE2EGraphUpdate(t *testing.T) {
 	input := &GraphUpdateInput{
 		ID:            String(graphID),
 		Unit:          String("times"), // fix typo: "time" => "times"
+		Description:   String("updated graph description"),
 		StartOnMonday: Bool(true),
 	}
 	result, err := e2eClient.Graph().Update(input)

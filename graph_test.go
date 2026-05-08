@@ -18,6 +18,7 @@ func TestGraph_CreateCreateRequestParameter(t *testing.T) {
 		Type:                String(GraphTypeInt),
 		Color:               String(GraphColorShibafu),
 		TimeZone:            String("UTC"),
+		Description:         String("description"),
 		SelfSufficient:      String(GraphSelfSufficientIncrement),
 		IsSecret:            Bool(true),
 		PublishOptionalData: Bool(true),
@@ -40,7 +41,7 @@ func TestGraph_CreateCreateRequestParameter(t *testing.T) {
 		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
 	}
 
-	s := `{"id":"graph-id","name":"name","unit":"times","type":"int","color":"shibafu","timezone":"UTC","selfSufficient":"increment","isSecret":true,"publishOptionalData":true}`
+	s := `{"id":"graph-id","name":"name","unit":"times","type":"int","color":"shibafu","timezone":"UTC","description":"description","selfSufficient":"increment","isSecret":true,"publishOptionalData":true}`
 	b := []byte(s)
 	if bytes.Equal(param.Body, b) == false {
 		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
@@ -648,6 +649,7 @@ func TestGraph_CreateUpdateRequestParameter(t *testing.T) {
 		Unit:                String("times"),
 		Color:               String(GraphColorShibafu),
 		TimeZone:            String("UTC"),
+		Description:         String("description"),
 		PurgeCacheURLs:      []string{"https://camo.githubusercontent.com/xxx/xxxx"},
 		SelfSufficient:      String(GraphSelfSufficientIncrement),
 		IsSecret:            Bool(true),
@@ -672,7 +674,7 @@ func TestGraph_CreateUpdateRequestParameter(t *testing.T) {
 		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
 	}
 
-	s := `{"name":"name","unit":"times","color":"shibafu","timezone":"UTC","purgeCacheURLs":["https://camo.githubusercontent.com/xxx/xxxx"],"selfSufficient":"increment","isSecret":true,"publishOptionalData":true}`
+	s := `{"name":"name","unit":"times","color":"shibafu","timezone":"UTC","description":"description","purgeCacheURLs":["https://camo.githubusercontent.com/xxx/xxxx"],"selfSufficient":"increment","isSecret":true,"publishOptionalData":true}`
 	b := []byte(s)
 	if bytes.Equal(param.Body, b) == false {
 		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
