@@ -257,6 +257,47 @@ func (p *Pixel) createAddRequestParameter(input *PixelAddInput) (*requestParamet
 	}, nil
 }
 
+// Subtract subtracts the specified quantity from the "Pixel" of the specified date.
+func (p *Pixel) Subtract(input *PixelSubtractInput) (*Result, error) {
+	return p.SubtractWithContext(context.Background(), input)
+}
+
+// SubtractWithContext subtracts the specified quantity from the "Pixel" of the specified date.
+func (p *Pixel) SubtractWithContext(ctx context.Context, input *PixelSubtractInput) (*Result, error) {
+	param, err := p.createSubtractRequestParameter(input)
+	if err != nil {
+		return &Result{}, errors.Wrapf(err, "failed to create pixel subtract parameter")
+	}
+
+	return doRequestAndParseResponse(ctx, param)
+}
+
+// PixelSubtractInput is input of Pixel.Subtract().
+type PixelSubtractInput struct {
+	// GraphID is a required field
+	GraphID *string `json:"-"`
+	// Date is a required field
+	Date *string `json:"-"`
+	// Quantity is a required field
+	Quantity *string `json:"quantity"`
+}
+
+func (p *Pixel) createSubtractRequestParameter(input *PixelSubtractInput) (*requestParameter, error) {
+	b, err := json.Marshal(input)
+	if err != nil {
+		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+	}
+
+	graphID := StringValue(input.GraphID)
+	date := StringValue(input.Date)
+	return &requestParameter{
+		Method: http.MethodPut,
+		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s/subtract", p.UserName, graphID, date),
+		Header: map[string]string{userToken: p.Token},
+		Body:   b,
+	}, nil
+}
+
 // Delete deletes the registered "Pixel".
 func (p *Pixel) Delete(input *PixelDeleteInput) (*Result, error) {
 	return p.DeleteWithContext(context.Background(), input)

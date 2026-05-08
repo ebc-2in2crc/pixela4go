@@ -389,6 +389,68 @@ func TestPixel_AddError(t *testing.T) {
 	testPageNotFoundError(t, err)
 }
 
+func TestPixel_CreateSubtractRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &PixelSubtractInput{
+		GraphID:  String(graphID),
+		Date:     String("20180915"),
+		Quantity: String("3"),
+	}
+	param, err := client.Pixel().createSubtractRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodPut {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/20180915/subtract", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	s := `{"quantity":"3"}`
+	b := []byte(s)
+	if bytes.Equal(param.Body, b) == false {
+		t.Errorf("Body: %s\nwant: %s", string(param.Body), s)
+	}
+}
+
+func TestPixel_Subtract(t *testing.T) {
+	clientMock = newOKMock()
+
+	client := New(userName, token)
+	input := &PixelSubtractInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("3")}
+	result, err := client.Pixel().Subtract(input)
+
+	testSuccess(t, result, err)
+}
+
+func TestPixel_SubtractFail(t *testing.T) {
+	clientMock = newAPIFailedMock()
+
+	client := New(userName, token)
+	input := &PixelSubtractInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("3")}
+	result, err := client.Pixel().Subtract(input)
+
+	testAPIFailedResult(t, result, err)
+}
+
+func TestPixel_SubtractError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &PixelSubtractInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("3")}
+	_, err := client.Pixel().Subtract(input)
+
+	testPageNotFoundError(t, err)
+}
+
 func TestPixel_CreateDeleteRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &PixelDeleteInput{GraphID: String(graphID), Date: String("20180915")}
