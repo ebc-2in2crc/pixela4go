@@ -1181,3 +1181,81 @@ func TestGraph_SubtractError(t *testing.T) {
 
 	testPageNotFoundError(t, err)
 }
+
+func TestGraph_CreateAnalyzeRequestParameter(t *testing.T) {
+	client := New(userName, token)
+	input := &GraphAnalyzeInput{ID: String(graphID)}
+	param, err := client.Graph().createAnalyzeRequestParameter(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if param.Method != http.MethodGet {
+		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
+	}
+
+	expect := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/analyze", userName, graphID)
+	if param.URL != expect {
+		t.Errorf("URL: %s\nwant: %s", param.URL, expect)
+	}
+
+	if param.Header[userToken] != token {
+		t.Errorf("%s: %s\nwant: %s", userToken, param.Header[userToken], token)
+	}
+
+	if bytes.Equal(param.Body, []byte{}) == false {
+		t.Errorf("Body: %s\nwant: \"\"", string(param.Body))
+	}
+}
+
+func TestGraph_Analyze(t *testing.T) {
+	s := `{"analysis":"This graph shows a consistent upward trend."}`
+	b := []byte(s)
+	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
+
+	client := New(userName, token)
+	input := &GraphAnalyzeInput{
+		ID: String(graphID),
+	}
+	result, err := client.Graph().Analyze(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	expect := &GraphAnalysis{
+		Analysis: "This graph shows a consistent upward trend.",
+		Result:   Result{IsSuccess: true, StatusCode: http.StatusOK},
+	}
+	if reflect.DeepEqual(result, expect) == false {
+		t.Errorf("got: %v\nwant: %v", result, expect)
+	}
+}
+
+func TestGraph_AnalyzeFail(t *testing.T) {
+	clientMock = newAPIFailedMock()
+
+	client := New(userName, token)
+	input := &GraphAnalyzeInput{
+		ID: String(graphID),
+	}
+	result, err := client.Graph().Analyze(input)
+	if err != nil {
+		t.Errorf("got: %v\nwant: nil", err)
+	}
+
+	if result.IsSuccess {
+		t.Errorf("got: %v\nwant: false", result.IsSuccess)
+	}
+}
+
+func TestGraph_AnalyzeError(t *testing.T) {
+	clientMock = newPageNotFoundMock()
+
+	client := New(userName, token)
+	input := &GraphAnalyzeInput{
+		ID: String(graphID),
+	}
+	_, err := client.Graph().Analyze(input)
+
+	testPageNotFoundError(t, err)
+}

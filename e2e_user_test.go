@@ -27,8 +27,9 @@ func testE2EUserCreate(t *testing.T) {
 func testE2EUserUpdate(t *testing.T) {
 	newToken := os.Getenv("PIXELA4GO_USER_SECOND_TOKEN")
 	input := &UserUpdateInput{
-		NewToken:   String(newToken),
-		ThanksCode: String(os.Getenv("PIXELA4GO_THANKS_CODE")),
+		NewToken:          String(newToken),
+		ThanksCode:        String(os.Getenv("PIXELA4GO_THANKS_CODE")),
+		AllowAIProcessing: Bool(true),
 	}
 	result, err := e2eClient.User().Update(input)
 	if err != nil {

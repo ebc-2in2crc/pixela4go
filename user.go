@@ -93,14 +93,16 @@ func (u *User) UpdateWithContext(ctx context.Context, input *UserUpdateInput) (*
 // UserUpdateInput is input of User.Update().
 type UserUpdateInput struct {
 	// NewToken is a required field
-	NewToken   *string
-	ThanksCode *string
+	NewToken          *string
+	ThanksCode        *string
+	AllowAIProcessing *bool
 }
 
 func (u *User) createUpdateRequestParameter(input *UserUpdateInput) (*requestParameter, error) {
 	update := userUpdate{
-		NewToken:   StringValue(input.NewToken),
-		ThanksCode: StringValue(input.ThanksCode),
+		NewToken:          StringValue(input.NewToken),
+		ThanksCode:        StringValue(input.ThanksCode),
+		AllowAIProcessing: input.AllowAIProcessing,
 	}
 	b, err := json.Marshal(update)
 	if err != nil {
@@ -116,8 +118,9 @@ func (u *User) createUpdateRequestParameter(input *UserUpdateInput) (*requestPar
 }
 
 type userUpdate struct {
-	NewToken   string `json:"newToken"`
-	ThanksCode string `json:"thanksCode,omitempty"`
+	NewToken          string `json:"newToken"`
+	ThanksCode        string `json:"thanksCode,omitempty"`
+	AllowAIProcessing *bool  `json:"allowAIProcessing,omitempty"`
 }
 
 // Delete deletes the specified registered user.
