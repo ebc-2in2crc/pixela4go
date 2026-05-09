@@ -40,14 +40,19 @@ type UserCreateInput struct {
 }
 
 func (u *User) createCreateRequestParameter(input *UserCreateInput) (*requestParameter, error) {
-	create := &userCreate{
+	b, err := json.Marshal(struct {
+		Token               string `json:"token"`
+		UserName            string `json:"username"`
+		AgreeTermsOfService string `json:"AgreeTermsOfService"`
+		NotMinor            string `json:"NotMinor"`
+		ThanksCode          string `json:"thanksCode,omitempty"`
+	}{
 		Token:               u.Token,
 		UserName:            u.UserName,
 		AgreeTermsOfService: boolToString(BoolValue(input.AgreeTermsOfService)),
 		NotMinor:            boolToString(BoolValue(input.NotMinor)),
 		ThanksCode:          StringValue(input.ThanksCode),
-	}
-	b, err := json.Marshal(create)
+	})
 	if err != nil {
 		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
 	}
@@ -58,14 +63,6 @@ func (u *User) createCreateRequestParameter(input *UserCreateInput) (*requestPar
 		Header: map[string]string{},
 		Body:   b,
 	}, nil
-}
-
-type userCreate struct {
-	Token               string `json:"token"`
-	UserName            string `json:"username"`
-	AgreeTermsOfService string `json:"AgreeTermsOfService"`
-	NotMinor            string `json:"NotMinor"`
-	ThanksCode          string `json:"thanksCode,omitempty"`
 }
 
 func boolToString(b bool) string {
@@ -99,12 +96,15 @@ type UserUpdateInput struct {
 }
 
 func (u *User) createUpdateRequestParameter(input *UserUpdateInput) (*requestParameter, error) {
-	update := userUpdate{
+	b, err := json.Marshal(struct {
+		NewToken          string `json:"newToken"`
+		ThanksCode        string `json:"thanksCode,omitempty"`
+		AllowAIProcessing *bool  `json:"allowAIProcessing,omitempty"`
+	}{
 		NewToken:          StringValue(input.NewToken),
 		ThanksCode:        StringValue(input.ThanksCode),
 		AllowAIProcessing: input.AllowAIProcessing,
-	}
-	b, err := json.Marshal(update)
+	})
 	if err != nil {
 		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
 	}
@@ -115,12 +115,6 @@ func (u *User) createUpdateRequestParameter(input *UserUpdateInput) (*requestPar
 		Header: map[string]string{userToken: u.Token},
 		Body:   b,
 	}, nil
-}
-
-type userUpdate struct {
-	NewToken          string `json:"newToken"`
-	ThanksCode        string `json:"thanksCode,omitempty"`
-	AllowAIProcessing *bool  `json:"allowAIProcessing,omitempty"`
 }
 
 // Delete deletes the specified registered user.
