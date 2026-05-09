@@ -124,19 +124,14 @@ func (u *User) Delete() (*Result, error) {
 
 // DeleteWithContext deletes the specified registered user.
 func (u *User) DeleteWithContext(ctx context.Context) (*Result, error) {
-	param, err := u.createDeleteRequestParameter()
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create user delete parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, u.createDeleteRequestParameter())
 }
 
-func (u *User) createDeleteRequestParameter() (*requestParameter, error) {
+func (u *User) createDeleteRequestParameter() *requestParameter {
 	return &requestParameter{
 		Method: http.MethodDelete,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s", u.UserName),
 		Header: map[string]string{userToken: u.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }

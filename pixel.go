@@ -65,12 +65,7 @@ func (p *Pixel) Increment(input *PixelIncrementInput) (*Result, error) {
 // IncrementWithContext increments quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
 // If the graph type is int then 1 added, and for float then 0.01 added.
 func (p *Pixel) IncrementWithContext(ctx context.Context, input *PixelIncrementInput) (*Result, error) {
-	param, err := p.createIncrementRequestParameter(input)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create pixel increment parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, p.createIncrementRequestParameter(input))
 }
 
 // PixelIncrementInput is input of Pixel.Increment().
@@ -79,14 +74,14 @@ type PixelIncrementInput struct {
 	GraphID *string
 }
 
-func (p *Pixel) createIncrementRequestParameter(input *PixelIncrementInput) (*requestParameter, error) {
+func (p *Pixel) createIncrementRequestParameter(input *PixelIncrementInput) *requestParameter {
 	graphID := StringValue(input.GraphID)
 	return &requestParameter{
 		Method: http.MethodPut,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/increment", p.UserName, graphID),
 		Header: map[string]string{contentLength: "0", userToken: p.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Decrement decrements quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
@@ -98,12 +93,7 @@ func (p *Pixel) Decrement(input *PixelDecrementInput) (*Result, error) {
 // DecrementWithContext decrements quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
 // If the graph type is int then -1 added, and for float then -0.01 added.
 func (p *Pixel) DecrementWithContext(ctx context.Context, input *PixelDecrementInput) (*Result, error) {
-	param, err := p.createDecrementRequestParameter(input)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create pixel decrement parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, p.createDecrementRequestParameter(input))
 }
 
 // PixelDecrementInput is input of Pixel.Decrement().
@@ -112,14 +102,14 @@ type PixelDecrementInput struct {
 	GraphID *string
 }
 
-func (p *Pixel) createDecrementRequestParameter(input *PixelDecrementInput) (*requestParameter, error) {
+func (p *Pixel) createDecrementRequestParameter(input *PixelDecrementInput) *requestParameter {
 	graphID := StringValue(input.GraphID)
 	return &requestParameter{
 		Method: http.MethodPut,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/decrement", p.UserName, graphID),
 		Header: map[string]string{contentLength: "0", userToken: p.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Get gets registered quantity as "Pixel".
@@ -129,12 +119,7 @@ func (p *Pixel) Get(input *PixelGetInput) (*Quantity, error) {
 
 // GetWithContext gets registered quantity as "Pixel".
 func (p *Pixel) GetWithContext(ctx context.Context, input *PixelGetInput) (*Quantity, error) {
-	param, err := p.createGetRequestParameter(input)
-	if err != nil {
-		return &Quantity{}, errors.Wrapf(err, "failed to create pixel get parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, p.createGetRequestParameter(input))
 	if err != nil {
 		return &Quantity{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -157,7 +142,7 @@ type PixelGetInput struct {
 	Date *string
 }
 
-func (p *Pixel) createGetRequestParameter(input *PixelGetInput) (*requestParameter, error) {
+func (p *Pixel) createGetRequestParameter(input *PixelGetInput) *requestParameter {
 	graphID := StringValue(input.GraphID)
 	date := StringValue(input.Date)
 	return &requestParameter{
@@ -165,7 +150,7 @@ func (p *Pixel) createGetRequestParameter(input *PixelGetInput) (*requestParamet
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
 		Header: map[string]string{userToken: p.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Quantity ... registered quantity.
@@ -305,12 +290,7 @@ func (p *Pixel) Delete(input *PixelDeleteInput) (*Result, error) {
 
 // DeleteWithContext deletes the registered "Pixel".
 func (p *Pixel) DeleteWithContext(ctx context.Context, input *PixelDeleteInput) (*Result, error) {
-	param, err := p.createDeleteRequestParameter(input)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create pixel delete parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, p.createDeleteRequestParameter(input))
 }
 
 // PixelDeleteInput is input of Pixel.Delete().
@@ -321,7 +301,7 @@ type PixelDeleteInput struct {
 	Date *string
 }
 
-func (p *Pixel) createDeleteRequestParameter(input *PixelDeleteInput) (*requestParameter, error) {
+func (p *Pixel) createDeleteRequestParameter(input *PixelDeleteInput) *requestParameter {
 	graphID := StringValue(input.GraphID)
 	date := StringValue(input.Date)
 	return &requestParameter{
@@ -329,5 +309,5 @@ func (p *Pixel) createDeleteRequestParameter(input *PixelDeleteInput) (*requestP
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/%s", p.UserName, graphID, date),
 		Header: map[string]string{userToken: p.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }

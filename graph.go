@@ -100,12 +100,7 @@ func (g *Graph) GetAll() (*GraphDefinitions, error) {
 
 // GetAllWithContext gets all predefined pixelation graph definitions.
 func (g *Graph) GetAllWithContext(ctx context.Context) (*GraphDefinitions, error) {
-	param, err := g.createGetAllRequestParameter()
-	if err != nil {
-		return &GraphDefinitions{}, errors.Wrapf(err, "failed to create get all graph parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, g.createGetAllRequestParameter())
 	if err != nil {
 		return &GraphDefinitions{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -120,13 +115,13 @@ func (g *Graph) GetAllWithContext(ctx context.Context) (*GraphDefinitions, error
 	return &definitions, nil
 }
 
-func (g *Graph) createGetAllRequestParameter() (*requestParameter, error) {
+func (g *Graph) createGetAllRequestParameter() *requestParameter {
 	return &requestParameter{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs", g.UserName),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // GraphDefinitions is graph definition list.
@@ -157,12 +152,7 @@ func (g *Graph) GetLatestPixel(input *GraphGetLatestPixelInput) (*GraphPixel, er
 
 // GetLatestPixelWithContext gets the latest Pixel registered in the graph.
 func (g *Graph) GetLatestPixelWithContext(ctx context.Context, input *GraphGetLatestPixelInput) (*GraphPixel, error) {
-	param, err := g.createGetLatestPixelRequestParameter(input)
-	if err != nil {
-		return &GraphPixel{}, errors.Wrapf(err, "failed to create get latest pixel parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, g.createGetLatestPixelRequestParameter(input))
 	if err != nil {
 		return &GraphPixel{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -177,14 +167,14 @@ func (g *Graph) GetLatestPixelWithContext(ctx context.Context, input *GraphGetLa
 	return &pixel, nil
 }
 
-func (g *Graph) createGetLatestPixelRequestParameter(input *GraphGetLatestPixelInput) (*requestParameter, error) {
+func (g *Graph) createGetLatestPixelRequestParameter(input *GraphGetLatestPixelInput) *requestParameter {
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/latest", g.UserName, ID),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // GraphGetLatestPixelInput is input of Graph.GetLatestPixel().
@@ -208,12 +198,7 @@ func (g *Graph) GetToday(input *GraphGetTodayInput) (*GraphPixel, error) {
 
 // GetTodayWithContext gets the Pixel registered on the day of the request.
 func (g *Graph) GetTodayWithContext(ctx context.Context, input *GraphGetTodayInput) (*GraphPixel, error) {
-	param, err := g.createGetTodayRequestParameter(input)
-	if err != nil {
-		return &GraphPixel{}, errors.Wrapf(err, "failed to create get today pixel parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, g.createGetTodayRequestParameter(input))
 	if err != nil {
 		return &GraphPixel{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -228,7 +213,7 @@ func (g *Graph) GetTodayWithContext(ctx context.Context, input *GraphGetTodayInp
 	return &pixel, nil
 }
 
-func (g *Graph) createGetTodayRequestParameter(input *GraphGetTodayInput) (*requestParameter, error) {
+func (g *Graph) createGetTodayRequestParameter(input *GraphGetTodayInput) *requestParameter {
 	ID := StringValue(input.ID)
 
 	// Create base URL without query parameters
@@ -252,7 +237,7 @@ func (g *Graph) createGetTodayRequestParameter(input *GraphGetTodayInput) (*requ
 		URL:    baseURL,
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // GraphGetTodayInput is input of Graph.GetToday().
@@ -272,12 +257,7 @@ func (g *Graph) GetSVG(input *GraphGetSVGInput) (string, error) {
 
 // GetSVGWithContext get a graph expressed in SVG format diagram that based on the registered information.
 func (g *Graph) GetSVGWithContext(ctx context.Context, input *GraphGetSVGInput) (string, error) {
-	param, err := g.createGetSVGRequestParameter(input)
-	if err != nil {
-		return "", errors.Wrapf(err, "failed to create get svg parameter")
-	}
-
-	b, err := mustDoRequest(ctx, param)
+	b, err := mustDoRequest(ctx, g.createGetSVGRequestParameter(input))
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to do request")
 	}
@@ -296,7 +276,7 @@ type GraphGetSVGInput struct {
 	GreaterThan *string `json:"greaterThan,omitempty"`
 }
 
-func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) (*requestParameter, error) {
+func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) *requestParameter {
 	ID := StringValue(input.ID)
 
 	// Create base URL without query parameters
@@ -341,7 +321,7 @@ func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) (*requestP
 		URL:    baseURL,
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Specify the graph display mode.
@@ -449,12 +429,7 @@ func (g *Graph) Stats(input *GraphStatsInput) (*Stats, error) {
 
 // StatsWithContext gets various statistics based on the registered information.
 func (g *Graph) StatsWithContext(ctx context.Context, input *GraphStatsInput) (*Stats, error) {
-	param, err := g.createStatsRequestParameter(input)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to create graph stats request parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, g.createStatsRequestParameter(input))
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to do request")
 	}
@@ -475,14 +450,14 @@ type GraphStatsInput struct {
 	ID *string
 }
 
-func (g *Graph) createStatsRequestParameter(input *GraphStatsInput) (*requestParameter, error) {
+func (g *Graph) createStatsRequestParameter(input *GraphStatsInput) *requestParameter {
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/stats", g.UserName, ID),
 		Header: map[string]string{},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Update updates predefined pixelation graph definitions.
@@ -540,12 +515,7 @@ func (g *Graph) Delete(input *GraphDeleteInput) (*Result, error) {
 
 // DeleteWithContext deletes the predefined pixelation graph definition.
 func (g *Graph) DeleteWithContext(ctx context.Context, input *GraphDeleteInput) (*Result, error) {
-	param, err := g.createDeleteRequestParameter(input)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create graph delete parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, g.createDeleteRequestParameter(input))
 }
 
 // GraphDeleteInput is input of Graph.Delete().
@@ -554,14 +524,14 @@ type GraphDeleteInput struct {
 	ID *string `json:"-"`
 }
 
-func (g *Graph) createDeleteRequestParameter(input *GraphDeleteInput) (*requestParameter, error) {
+func (g *Graph) createDeleteRequestParameter(input *GraphDeleteInput) *requestParameter {
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodDelete,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s", g.UserName, ID),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // GetPixelDates gets a Date list of Pixel registered in the graph specified by graphID.
@@ -599,12 +569,7 @@ func (g *Graph) GetPixelDates(input *GraphGetPixelDatesInput) (*Pixels, error) {
 // You will get a list you specify.
 // You can not specify a period greater than 365 days.
 func (g *Graph) GetPixelDatesWithContext(ctx context.Context, input *GraphGetPixelDatesInput) (*Pixels, error) {
-	param, err := g.createGetPixelDatesRequestParameter(input)
-	if err != nil {
-		return &Pixels{}, errors.Wrapf(err, "failed to create get pixel dates parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, g.createGetPixelDatesRequestParameter(input))
 	if err != nil {
 		return &Pixels{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -680,7 +645,7 @@ func unmarshalPixelsNoBody(b []byte) (*Pixels, error) {
 	}, nil
 }
 
-func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInput) (*requestParameter, error) {
+func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInput) *requestParameter {
 	ID := StringValue(input.ID)
 	baseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels", g.UserName, ID)
 
@@ -703,7 +668,7 @@ func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInp
 		URL:    baseURL,
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Stopwatch start and end the measurement of the time.
@@ -713,12 +678,7 @@ func (g *Graph) Stopwatch(input *GraphStopwatchInput) (*Result, error) {
 
 // StopwatchWithContext start and end the measurement of the time.
 func (g *Graph) StopwatchWithContext(ctx context.Context, input *GraphStopwatchInput) (*Result, error) {
-	param, err := g.createStopwatchRequestParameter(input)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create graph stopwatch parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, g.createStopwatchRequestParameter(input))
 }
 
 // GraphStopwatchInput is input of Graph.Stopwatch().
@@ -727,14 +687,14 @@ type GraphStopwatchInput struct {
 	ID *string
 }
 
-func (g *Graph) createStopwatchRequestParameter(input *GraphStopwatchInput) (*requestParameter, error) {
+func (g *Graph) createStopwatchRequestParameter(input *GraphStopwatchInput) *requestParameter {
 	graphID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodPost,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/stopwatch", g.UserName, graphID),
 		Header: map[string]string{contentLength: "0", userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Get gets predefined pixelation graph definitions.
@@ -744,12 +704,7 @@ func (g *Graph) Get(input *GraphGetInput) (*GraphDefinition, error) {
 
 // GetWithContext gets predefined pixelation graph definitions.
 func (g *Graph) GetWithContext(ctx context.Context, input *GraphGetInput) (*GraphDefinition, error) {
-	param, err := g.createGetRequestParameter(input)
-	if err != nil {
-		return &GraphDefinition{}, errors.Wrapf(err, "failed to create get graph parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, g.createGetRequestParameter(input))
 	if err != nil {
 		return &GraphDefinition{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -764,14 +719,14 @@ func (g *Graph) GetWithContext(ctx context.Context, input *GraphGetInput) (*Grap
 	return &definition, nil
 }
 
-func (g *Graph) createGetRequestParameter(input *GraphGetInput) (*requestParameter, error) {
+func (g *Graph) createGetRequestParameter(input *GraphGetInput) *requestParameter {
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/graph-def", g.UserName, ID),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // GraphGetInput is input of Graph.Get().
@@ -863,12 +818,7 @@ func (g *Graph) Analyze(input *GraphAnalyzeInput) (*GraphAnalysis, error) {
 
 // AnalyzeWithContext analyzes the graph by AI and returns the result.
 func (g *Graph) AnalyzeWithContext(ctx context.Context, input *GraphAnalyzeInput) (*GraphAnalysis, error) {
-	param, err := g.createAnalyzeRequestParameter(input)
-	if err != nil {
-		return &GraphAnalysis{}, errors.Wrapf(err, "failed to create graph analyze parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, g.createAnalyzeRequestParameter(input))
 	if err != nil {
 		return &GraphAnalysis{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -895,12 +845,12 @@ type GraphAnalysis struct {
 	Result
 }
 
-func (g *Graph) createAnalyzeRequestParameter(input *GraphAnalyzeInput) (*requestParameter, error) {
+func (g *Graph) createAnalyzeRequestParameter(input *GraphAnalyzeInput) *requestParameter {
 	ID := StringValue(input.ID)
 	return &requestParameter{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/analyze", g.UserName, ID),
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }

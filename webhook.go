@@ -85,12 +85,7 @@ func (w *Webhook) GetAll() (*WebhookDefinitions, error) {
 
 // GetAllWithContext get all predefined webhooks definitions.
 func (w *Webhook) GetAllWithContext(ctx context.Context) (*WebhookDefinitions, error) {
-	param, err := w.createGetAllRequestParameter()
-	if err != nil {
-		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to create get all webhooks parameter")
-	}
-
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, w.createGetAllRequestParameter())
 	if err != nil {
 		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to do request")
 	}
@@ -118,13 +113,13 @@ type WebhookDefinition struct {
 	Type        string `json:"type"`
 }
 
-func (w *Webhook) createGetAllRequestParameter() (*requestParameter, error) {
+func (w *Webhook) createGetAllRequestParameter() *requestParameter {
 	return &requestParameter{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks", w.UserName),
 		Header: map[string]string{userToken: w.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Delete delete the registered Webhook.
@@ -134,12 +129,7 @@ func (w *Webhook) Delete(input *WebhookDeleteInput) (*Result, error) {
 
 // DeleteWithContext delete the registered Webhook.
 func (w *Webhook) DeleteWithContext(ctx context.Context, input *WebhookDeleteInput) (*Result, error) {
-	param, err := w.createDeleteRequestParameter(input)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create webhook delete parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, w.createDeleteRequestParameter(input))
 }
 
 // WebhookDeleteInput is input of Webhook.Delete().
@@ -148,14 +138,14 @@ type WebhookDeleteInput struct {
 	WebhookHash *string
 }
 
-func (w *Webhook) createDeleteRequestParameter(input *WebhookDeleteInput) (*requestParameter, error) {
+func (w *Webhook) createDeleteRequestParameter(input *WebhookDeleteInput) *requestParameter {
 	hash := StringValue(input.WebhookHash)
 	return &requestParameter{
 		Method: http.MethodDelete,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks/%s", w.UserName, hash),
 		Header: map[string]string{userToken: w.Token},
 		Body:   []byte{},
-	}, nil
+	}
 }
 
 // Invoke invoke the webhook registered in advance.
@@ -167,23 +157,18 @@ func (w *Webhook) Invoke(input *WebhookInvokeInput) (*Result, error) {
 // InvokeWithContext invoke the webhook registered in advance.
 // It is used "timezone" setting as post date if Graph's "timezone" is specified, if not specified, calculates it in "UTC".
 func (w *Webhook) InvokeWithContext(ctx context.Context, input *WebhookInvokeInput) (*Result, error) {
-	param, err := w.createInvokeRequestParameter(input)
-	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create webhook invoke parameter")
-	}
-
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, w.createInvokeRequestParameter(input))
 }
 
 // WebhookInvokeInput is input of Webhook.Invoke().
 type WebhookInvokeInput WebhookDeleteInput
 
-func (w *Webhook) createInvokeRequestParameter(input *WebhookInvokeInput) (*requestParameter, error) {
+func (w *Webhook) createInvokeRequestParameter(input *WebhookInvokeInput) *requestParameter {
 	hash := StringValue(input.WebhookHash)
 	return &requestParameter{
 		Method: http.MethodPost,
 		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/webhooks/%s", w.UserName, hash),
 		Header: map[string]string{contentLength: "0"},
 		Body:   []byte{},
-	}, nil
+	}
 }

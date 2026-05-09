@@ -111,10 +111,7 @@ func TestGraph_CreateError(t *testing.T) {
 
 func TestGraph_CreateGetAllRequestParameter(t *testing.T) {
 	client := New(userName, token)
-	param, err := client.Graph().createGetAllRequestParameter()
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createGetAllRequestParameter()
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
@@ -191,10 +188,7 @@ func TestGraph_GetAllError(t *testing.T) {
 func TestGraph_CreateGetLatestPixelRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphGetLatestPixelInput{ID: String(graphID)}
-	param, err := client.Graph().createGetLatestPixelRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createGetLatestPixelRequestParameter(input)
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
@@ -260,10 +254,7 @@ func TestGraph_CreateGetTodayRequestParameter(t *testing.T) {
 	input1 := &GraphGetTodayInput{
 		ID: String(graphID),
 	}
-	param1, err := client.Graph().createGetTodayRequestParameter(input1)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param1 := client.Graph().createGetTodayRequestParameter(input1)
 
 	if param1.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param1.Method, http.MethodGet)
@@ -287,10 +278,7 @@ func TestGraph_CreateGetTodayRequestParameter(t *testing.T) {
 		ID:          String(graphID),
 		ReturnEmpty: Bool(true),
 	}
-	param2, err := client.Graph().createGetTodayRequestParameter(input2)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param2 := client.Graph().createGetTodayRequestParameter(input2)
 
 	// Parse the actual URL to compare parts independently of query parameter order
 	actualURL, err := url.Parse(param2.URL)
@@ -366,10 +354,7 @@ func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 		LessThan:    String("10"),
 		GreaterThan: String("5"),
 	}
-	param, err := client.Graph().createGetSVGRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createGetSVGRequestParameter(input)
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
@@ -570,10 +555,7 @@ func TestGraph_URL(t *testing.T) {
 func TestGraph_CreateStatsRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphStatsInput{ID: String(graphID)}
-	param, err := client.Graph().createStatsRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createStatsRequestParameter(input)
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
@@ -745,10 +727,7 @@ func TestGraph_UpdateError(t *testing.T) {
 func TestGraph_CreateDeleteRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphDeleteInput{ID: String(graphID)}
-	param, err := client.Graph().createDeleteRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createDeleteRequestParameter(input)
 
 	if param.Method != http.MethodDelete {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)
@@ -806,10 +785,7 @@ func TestGraph_CreateGetPixelDatesRequestParameter(t *testing.T) {
 		To:       String("20181231"),
 		WithBody: Bool(true),
 	}
-	param, err := client.Graph().createGetPixelDatesRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createGetPixelDatesRequestParameter(input)
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
@@ -908,10 +884,7 @@ func TestGraph_GetPixelDatesError(t *testing.T) {
 func TestGraph_CreateStopwatchRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphStopwatchInput{ID: String(graphID)}
-	param, err := client.Graph().createStopwatchRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createStopwatchRequestParameter(input)
 
 	if param.Method != http.MethodPost {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
@@ -967,10 +940,7 @@ func TestGraph_StopwatchError(t *testing.T) {
 func TestGraph_CreateGetRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphGetInput{ID: String(graphID)}
-	param, err := client.Graph().createGetRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createGetRequestParameter(input)
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
@@ -1185,10 +1155,7 @@ func TestGraph_SubtractError(t *testing.T) {
 func TestGraph_CreateAnalyzeRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &GraphAnalyzeInput{ID: String(graphID)}
-	param, err := client.Graph().createAnalyzeRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Graph().createAnalyzeRequestParameter(input)
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)

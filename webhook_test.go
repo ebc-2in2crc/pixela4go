@@ -91,10 +91,7 @@ func TestWebhook_CreateError(t *testing.T) {
 
 func TestCreateWebhook_GetAllRequestParameter(t *testing.T) {
 	client := New(userName, token)
-	param, err := client.Webhook().createGetAllRequestParameter()
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Webhook().createGetAllRequestParameter()
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
@@ -161,10 +158,7 @@ func TestWebhook_GetAllError(t *testing.T) {
 func TestWebhook_CreateDeleteRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &WebhookDeleteInput{WebhookHash: String("webhook-hash")}
-	param, err := client.Webhook().createDeleteRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Webhook().createDeleteRequestParameter(input)
 
 	if param.Method != http.MethodDelete {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)
@@ -217,10 +211,7 @@ func TestWebhook_DeleteError(t *testing.T) {
 func TestWebhook_CreateInvokeRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &WebhookInvokeInput{WebhookHash: String("webhook-hash")}
-	param, err := client.Webhook().createInvokeRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Webhook().createInvokeRequestParameter(input)
 
 	if param.Method != http.MethodPost {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPost)
