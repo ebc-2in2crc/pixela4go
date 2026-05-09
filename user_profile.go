@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 )
 
 // A UserProfile manages communication with the Pixela user profile API.
@@ -24,7 +23,7 @@ func (u *UserProfile) Update(input *UserProfileUpdateInput) (*Result, error) {
 func (u *UserProfile) UpdateWithContext(ctx context.Context, input *UserProfileUpdateInput) (*Result, error) {
 	param, err := u.createUpdateRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create user profile update parameter")
+		return &Result{}, fmt.Errorf("failed to create user profile update parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -44,7 +43,7 @@ type UserProfileUpdateInput struct {
 func (u *UserProfile) createUpdateRequestParameter(input *UserProfileUpdateInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	return &requestParameter{

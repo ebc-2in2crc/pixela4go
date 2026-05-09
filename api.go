@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/pkg/errors"
 )
 
 // APIBaseURL is Base URL for API requests.
@@ -43,7 +42,7 @@ func newHTTPRequest(ctx context.Context, param *requestParameter) (*http.Request
 		param.URL,
 		bytes.NewReader(param.Body))
 	if err != nil {
-		return &http.Request{}, errors.Wrap(err, "failed to create http.Request")
+		return &http.Request{}, fmt.Errorf("failed to create http.Request: %w", err)
 	}
 	if param.Header != nil {
 		for k, v := range param.Header {
@@ -71,7 +70,7 @@ func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) 
 	return func(m *retryer) {
 		req, err := newHTTPRequest(ctx, param)
 		if err != nil {
-			m.err = errors.Wrap(err, "failed to create http.Request")
+			m.err = fmt.Errorf("failed to create http.Request: %w", err)
 			return
 		}
 
@@ -81,14 +80,14 @@ func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) 
 			resp, err = clientMock.do(req)
 		}
 		if err != nil {
-			m.err = errors.Wrapf(err, "failed http.Client do")
+			m.err = fmt.Errorf("failed http.Client do: %w", err)
 			return
 		}
 		defer resp.Body.Close()
 
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {
-			m.err = errors.Wrapf(err, "failed to read response body")
+			m.err = fmt.Errorf("failed to read response body: %w", err)
 			return
 		}
 
@@ -101,7 +100,7 @@ func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) 
 func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
 	req, err := newHTTPRequest(ctx, param)
 	if err != nil {
-		return []byte{}, errors.Wrap(err, "failed to create http.Request")
+		return []byte{}, fmt.Errorf("failed to create http.Request: %w", err)
 	}
 
 	client := http.Client{}
@@ -110,17 +109,17 @@ func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error)
 		resp, err = clientMock.do(req)
 	}
 	if err != nil {
-		return []byte{}, errors.Wrapf(err, "failed http.Client do")
+		return []byte{}, fmt.Errorf("failed http.Client do: %w", err)
 	}
 	defer resp.Body.Close()
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return []byte{}, errors.Wrapf(err, "failed to read response body")
+		return []byte{}, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	if resp.StatusCode >= 300 {
-		return b, errors.Errorf("failed to call API: %s", string(b))
+		return b, fmt.Errorf("failed to call API: %s", string(b))
 	}
 
 	return b, nil
@@ -137,7 +136,7 @@ func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*R
 
 	r, err := parseNormalResponse(retry.body)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to parse normal response")
+		return &Result{}, fmt.Errorf("failed to parse normal response: %w", err)
 	}
 
 	r.StatusCode = retry.statusCode
@@ -147,7 +146,7 @@ func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*R
 func parseNormalResponse(b []byte) (*Result, error) {
 	var result Result
 	if err := json.Unmarshal(b, &result); err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to unmarshal json: %s", string(b))
+		return &Result{}, fmt.Errorf("failed to unmarshal json: %s: %w", string(b), err)
 	}
 	return &result, nil
 }

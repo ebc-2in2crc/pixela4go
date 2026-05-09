@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 )
 
 // A Webhook manages communication with the Pixela webhook API.
@@ -24,18 +23,18 @@ func (w *Webhook) Create(input *WebhookCreateInput) (*WebhookCreateResult, error
 func (w *Webhook) CreateWithContext(ctx context.Context, input *WebhookCreateInput) (*WebhookCreateResult, error) {
 	param, err := w.createCreateRequestParameter(input)
 	if err != nil {
-		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to create webhook create parameter")
+		return &WebhookCreateResult{}, fmt.Errorf("failed to create webhook create parameter: %w", err)
 	}
 
 	b, status, err := doRequest(ctx, param)
 	if err != nil {
-		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to do request")
+		return &WebhookCreateResult{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var createResult WebhookCreateResult
 	createResult.StatusCode = status
 	if err := json.Unmarshal(b, &createResult); err != nil {
-		return &WebhookCreateResult{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &WebhookCreateResult{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	return &createResult, nil
@@ -67,7 +66,7 @@ type WebhookCreateResult struct {
 func (w *Webhook) createCreateRequestParameter(input *WebhookCreateInput) (*requestParameter, error) {
 	b, err := json.Marshal(&input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	return &requestParameter{
@@ -87,13 +86,13 @@ func (w *Webhook) GetAll() (*WebhookDefinitions, error) {
 func (w *Webhook) GetAllWithContext(ctx context.Context) (*WebhookDefinitions, error) {
 	b, status, err := doRequest(ctx, w.createGetAllRequestParameter())
 	if err != nil {
-		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to do request")
+		return &WebhookDefinitions{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var definitions WebhookDefinitions
 	definitions.StatusCode = status
 	if err := json.Unmarshal(b, &definitions); err != nil {
-		return &WebhookDefinitions{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &WebhookDefinitions{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	definitions.IsSuccess = definitions.Message == ""

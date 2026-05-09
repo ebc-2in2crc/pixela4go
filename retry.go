@@ -2,11 +2,11 @@ package pixela
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"math"
 	"net/http"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 const maxRetryCount = 20
@@ -58,7 +58,7 @@ func (m *retryer) shouldRetry() bool {
 
 	r, err := parseNormalResponse(m.body)
 	if err != nil {
-		m.err = errors.Wrapf(err, "failed to parse normal response")
+		m.err = fmt.Errorf("failed to parse normal response: %w", err)
 		return false
 	}
 
