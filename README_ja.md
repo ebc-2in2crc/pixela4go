@@ -139,8 +139,22 @@ func main() {
 3. コードを変更します
 4. `make test` でテストを実行し, パスすることを確認します
 5. `make fmt` でコードをフォーマットします
-6. 変更をコミットします (`git commit -am 'Add some feature'`)
+6. [Conventional Commits](https://www.conventionalcommits.org/) の形式で変更をコミットします
 7. 新しいプルリクエストを作成します
+
+### コミットの種類
+
+| Type | 説明 |
+|---|---|
+| `feat` | 新しい API メソッドや入力フィールドの追加 |
+| `fix` | 誤った動作の修正（URL・HTTP メソッド・フィールド処理の誤りなど） |
+| `docs` | ドキュメントのみの変更（README・AGENTS.md・godoc コメント） |
+| `refactor` | 動作を変えない内部構造の整理 |
+| `test` | プロダクションコードを変更しないテストの追加・修正 |
+| `chore` | 依存ライブラリの更新・置き換え、標準ライブラリへの移行、Makefile・go.mod の変更 |
+| `ci` | CI 設定の変更（`.github/workflows/`） |
+
+破壊的変更の場合は、type の後に `!` を付けるか（`feat!:`）、フッターに `BREAKING CHANGE:` を記載してください。
 
 ## ライセンス
 
