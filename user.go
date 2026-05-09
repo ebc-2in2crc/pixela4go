@@ -10,8 +10,9 @@ import (
 
 // A User manages communication with the Pixela user API.
 type User struct {
-	UserName string
-	Token    string
+	UserName   string
+	Token      string
+	httpClient HTTPClient
 }
 
 // Create creates a new Pixela user.
@@ -26,7 +27,7 @@ func (u *User) CreateWithContext(ctx context.Context, input *UserCreateInput) (*
 		return &Result{}, fmt.Errorf("failed to create user create parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, u.httpClient, param)
 }
 
 // UserCreateInput is input of User.Create().
@@ -83,7 +84,7 @@ func (u *User) UpdateWithContext(ctx context.Context, input *UserUpdateInput) (*
 		return &Result{}, fmt.Errorf("failed to create user update parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, u.httpClient, param)
 }
 
 // UserUpdateInput is input of User.Update().
@@ -123,7 +124,7 @@ func (u *User) Delete() (*Result, error) {
 
 // DeleteWithContext deletes the specified registered user.
 func (u *User) DeleteWithContext(ctx context.Context) (*Result, error) {
-	return doRequestAndParseResponse(ctx, u.createDeleteRequestParameter())
+	return doRequestAndParseResponse(ctx, u.httpClient, u.createDeleteRequestParameter())
 }
 
 func (u *User) createDeleteRequestParameter() *requestParameter {

@@ -10,8 +10,9 @@ import (
 
 // A UserProfile manages communication with the Pixela user profile API.
 type UserProfile struct {
-	UserName string
-	Token    string
+	UserName   string
+	Token      string
+	httpClient HTTPClient
 }
 
 // Update updates the profile information for the user corresponding to username.
@@ -26,7 +27,7 @@ func (u *UserProfile) UpdateWithContext(ctx context.Context, input *UserProfileU
 		return &Result{}, fmt.Errorf("failed to create user profile update parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, u.httpClient, param)
 }
 
 // UserProfileUpdateInput is input of UserProfile.Update().

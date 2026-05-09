@@ -42,9 +42,8 @@ func TestWebhook_CreateCreateRequestParameter(t *testing.T) {
 func TestWebhook_Create(t *testing.T) {
 	s := `{"webhookHash":"webhook-hash","message":"Success.","isSuccess":true}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &WebhookCreateInput{
 		GraphID: String(graphID),
 		Type:    String(WebhookTypeIncrement),
@@ -64,9 +63,8 @@ func TestWebhook_Create(t *testing.T) {
 }
 
 func TestWebhook_CreateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &WebhookCreateInput{
 		GraphID: String(graphID),
 		Type:    String(WebhookTypeIncrement),
@@ -77,9 +75,8 @@ func TestWebhook_CreateFail(t *testing.T) {
 }
 
 func TestWebhook_CreateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &WebhookCreateInput{
 		GraphID: String(graphID),
 		Type:    String(WebhookTypeIncrement),
@@ -114,9 +111,8 @@ func TestCreateWebhook_GetAllRequestParameter(t *testing.T) {
 func TestWebhook_GetAll(t *testing.T) {
 	s := `{"webhooks":[{"webhookHash":"webhook-hash","graphID":"test-graph","type":"increment"}]}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	definitions, err := client.Webhook().GetAll()
 	if err != nil {
 		t.Errorf("got: %v\nwant: nil", err)
@@ -138,18 +134,16 @@ func TestWebhook_GetAll(t *testing.T) {
 }
 
 func TestWebhook_GetAllFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	result, err := client.Webhook().GetAll()
 
 	testAPIFailedResult(t, &result.Result, err)
 }
 
 func TestWebhook_GetAllError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	_, err := client.Webhook().GetAll()
 
 	testPageNotFoundError(t, err)
@@ -179,9 +173,8 @@ func TestWebhook_CreateDeleteRequestParameter(t *testing.T) {
 }
 
 func TestWebhook_Delete(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &WebhookDeleteInput{WebhookHash: String("webhook-hash")}
 	result, err := client.Webhook().Delete(input)
 
@@ -189,9 +182,8 @@ func TestWebhook_Delete(t *testing.T) {
 }
 
 func TestWebhook_DeleteFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &WebhookDeleteInput{WebhookHash: String("webhook-hash")}
 	result, err := client.Webhook().Delete(input)
 
@@ -199,9 +191,8 @@ func TestWebhook_DeleteFail(t *testing.T) {
 }
 
 func TestWebhook_DeleteError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &WebhookDeleteInput{WebhookHash: String("webhook-hash")}
 	_, err := client.Webhook().Delete(input)
 
@@ -232,9 +223,8 @@ func TestWebhook_CreateInvokeRequestParameter(t *testing.T) {
 }
 
 func TestWebhook_Invoke(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &WebhookInvokeInput{WebhookHash: String("webhook-hash")}
 	result, err := client.Webhook().Invoke(input)
 
@@ -242,9 +232,8 @@ func TestWebhook_Invoke(t *testing.T) {
 }
 
 func TestWebhook_InvokeFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &WebhookInvokeInput{WebhookHash: String("webhook-hash")}
 	result, err := client.Webhook().Invoke(input)
 
@@ -252,9 +241,8 @@ func TestWebhook_InvokeFail(t *testing.T) {
 }
 
 func TestWebhook_InvokeError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &WebhookInvokeInput{WebhookHash: String("webhook-hash")}
 	_, err := client.Webhook().Invoke(input)
 

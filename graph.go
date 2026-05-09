@@ -11,8 +11,9 @@ import (
 
 // A Graph manages communication with the Pixela graph API.
 type Graph struct {
-	UserName string
-	Token    string
+	UserName   string
+	Token      string
+	httpClient HTTPClient
 }
 
 // Create creates a new pixelation graph definition.
@@ -27,7 +28,7 @@ func (g *Graph) CreateWithContext(ctx context.Context, input *GraphCreateInput) 
 		return &Result{}, fmt.Errorf("failed to create graph create parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, g.httpClient, param)
 }
 
 // GraphCreateInput is input of Graph.Create().
@@ -99,7 +100,7 @@ func (g *Graph) GetAll() (*GraphDefinitions, error) {
 
 // GetAllWithContext gets all predefined pixelation graph definitions.
 func (g *Graph) GetAllWithContext(ctx context.Context) (*GraphDefinitions, error) {
-	b, status, err := doRequest(ctx, g.createGetAllRequestParameter())
+	b, status, err := doRequest(ctx, g.httpClient, g.createGetAllRequestParameter())
 	if err != nil {
 		return &GraphDefinitions{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -151,7 +152,7 @@ func (g *Graph) GetLatestPixel(input *GraphGetLatestPixelInput) (*GraphPixel, er
 
 // GetLatestPixelWithContext gets the latest Pixel registered in the graph.
 func (g *Graph) GetLatestPixelWithContext(ctx context.Context, input *GraphGetLatestPixelInput) (*GraphPixel, error) {
-	b, status, err := doRequest(ctx, g.createGetLatestPixelRequestParameter(input))
+	b, status, err := doRequest(ctx, g.httpClient, g.createGetLatestPixelRequestParameter(input))
 	if err != nil {
 		return &GraphPixel{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -197,7 +198,7 @@ func (g *Graph) GetToday(input *GraphGetTodayInput) (*GraphPixel, error) {
 
 // GetTodayWithContext gets the Pixel registered on the day of the request.
 func (g *Graph) GetTodayWithContext(ctx context.Context, input *GraphGetTodayInput) (*GraphPixel, error) {
-	b, status, err := doRequest(ctx, g.createGetTodayRequestParameter(input))
+	b, status, err := doRequest(ctx, g.httpClient, g.createGetTodayRequestParameter(input))
 	if err != nil {
 		return &GraphPixel{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -256,7 +257,7 @@ func (g *Graph) GetSVG(input *GraphGetSVGInput) (string, error) {
 
 // GetSVGWithContext get a graph expressed in SVG format diagram that based on the registered information.
 func (g *Graph) GetSVGWithContext(ctx context.Context, input *GraphGetSVGInput) (string, error) {
-	b, err := mustDoRequest(ctx, g.createGetSVGRequestParameter(input))
+	b, err := mustDoRequest(ctx, g.httpClient, g.createGetSVGRequestParameter(input))
 	if err != nil {
 		return "", fmt.Errorf("failed to do request: %w", err)
 	}
@@ -355,7 +356,7 @@ func (g *Graph) UpdatePixelsWithContext(ctx context.Context, input *GraphUpdateP
 		return &Result{}, fmt.Errorf("failed to create graph update pixels parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, g.httpClient, param)
 }
 
 // GraphUpdatePixelsInput is input of Graph.UpdatePixels().
@@ -428,7 +429,7 @@ func (g *Graph) Stats(input *GraphStatsInput) (*Stats, error) {
 
 // StatsWithContext gets various statistics based on the registered information.
 func (g *Graph) StatsWithContext(ctx context.Context, input *GraphStatsInput) (*Stats, error) {
-	b, status, err := doRequest(ctx, g.createStatsRequestParameter(input))
+	b, status, err := doRequest(ctx, g.httpClient, g.createStatsRequestParameter(input))
 	if err != nil {
 		return nil, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -473,7 +474,7 @@ func (g *Graph) UpdateWithContext(ctx context.Context, input *GraphUpdateInput) 
 		return &Result{}, fmt.Errorf("failed to create graph update parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, g.httpClient, param)
 }
 
 // GraphUpdateInput is input of Graph.Update().
@@ -514,7 +515,7 @@ func (g *Graph) Delete(input *GraphDeleteInput) (*Result, error) {
 
 // DeleteWithContext deletes the predefined pixelation graph definition.
 func (g *Graph) DeleteWithContext(ctx context.Context, input *GraphDeleteInput) (*Result, error) {
-	return doRequestAndParseResponse(ctx, g.createDeleteRequestParameter(input))
+	return doRequestAndParseResponse(ctx, g.httpClient, g.createDeleteRequestParameter(input))
 }
 
 // GraphDeleteInput is input of Graph.Delete().
@@ -568,7 +569,7 @@ func (g *Graph) GetPixelDates(input *GraphGetPixelDatesInput) (*Pixels, error) {
 // You will get a list you specify.
 // You can not specify a period greater than 365 days.
 func (g *Graph) GetPixelDatesWithContext(ctx context.Context, input *GraphGetPixelDatesInput) (*Pixels, error) {
-	b, status, err := doRequest(ctx, g.createGetPixelDatesRequestParameter(input))
+	b, status, err := doRequest(ctx, g.httpClient, g.createGetPixelDatesRequestParameter(input))
 	if err != nil {
 		return &Pixels{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -677,7 +678,7 @@ func (g *Graph) Stopwatch(input *GraphStopwatchInput) (*Result, error) {
 
 // StopwatchWithContext start and end the measurement of the time.
 func (g *Graph) StopwatchWithContext(ctx context.Context, input *GraphStopwatchInput) (*Result, error) {
-	return doRequestAndParseResponse(ctx, g.createStopwatchRequestParameter(input))
+	return doRequestAndParseResponse(ctx, g.httpClient, g.createStopwatchRequestParameter(input))
 }
 
 // GraphStopwatchInput is input of Graph.Stopwatch().
@@ -703,7 +704,7 @@ func (g *Graph) Get(input *GraphGetInput) (*GraphDefinition, error) {
 
 // GetWithContext gets predefined pixelation graph definitions.
 func (g *Graph) GetWithContext(ctx context.Context, input *GraphGetInput) (*GraphDefinition, error) {
-	b, status, err := doRequest(ctx, g.createGetRequestParameter(input))
+	b, status, err := doRequest(ctx, g.httpClient, g.createGetRequestParameter(input))
 	if err != nil {
 		return &GraphDefinition{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -746,7 +747,7 @@ func (g *Graph) AddWithContext(ctx context.Context, input *GraphAddInput) (*Resu
 		return &Result{}, fmt.Errorf("failed to create graph add parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, g.httpClient, param)
 }
 
 // GraphAddInput is input of Graph.Add().
@@ -784,7 +785,7 @@ func (g *Graph) SubtractWithContext(ctx context.Context, input *GraphSubtractInp
 		return &Result{}, fmt.Errorf("failed to create graph add parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, g.httpClient, param)
 }
 
 // GraphSubtractInput is input of Graph.Subtract().
@@ -817,7 +818,7 @@ func (g *Graph) Analyze(input *GraphAnalyzeInput) (*GraphAnalysis, error) {
 
 // AnalyzeWithContext analyzes the graph by AI and returns the result.
 func (g *Graph) AnalyzeWithContext(ctx context.Context, input *GraphAnalyzeInput) (*GraphAnalysis, error) {
-	b, status, err := doRequest(ctx, g.createAnalyzeRequestParameter(input))
+	b, status, err := doRequest(ctx, g.httpClient, g.createAnalyzeRequestParameter(input))
 	if err != nil {
 		return &GraphAnalysis{}, fmt.Errorf("failed to do request: %w", err)
 	}

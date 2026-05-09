@@ -44,9 +44,8 @@ func TestCreateUserProfileUpdateRequestParameter(t *testing.T) {
 }
 
 func TestUserProfileUpdate(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &UserProfileUpdateInput{
 		DisplayName:       String("displayName"),
 		GravatarIconEmail: String("gravatarIconEmail"),
@@ -62,9 +61,8 @@ func TestUserProfileUpdate(t *testing.T) {
 }
 
 func TestUserProfileUpdateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &UserProfileUpdateInput{
 		DisplayName:       String("displayName"),
 		GravatarIconEmail: String("gravatarIconEmail"),
@@ -80,9 +78,8 @@ func TestUserProfileUpdateFail(t *testing.T) {
 }
 
 func TestUserProfileUpdateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &UserProfileUpdateInput{
 		DisplayName:       String("displayName"),
 		GravatarIconEmail: String("gravatarIconEmail"),

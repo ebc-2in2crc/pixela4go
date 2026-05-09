@@ -19,14 +19,12 @@ type httpClientMock struct {
 	body       []byte
 }
 
-func (c *httpClientMock) do(req *http.Request) (*http.Response, error) {
+func (c *httpClientMock) Do(req *http.Request) (*http.Response, error) {
 	resp := &http.Response{}
 	resp.StatusCode = c.statusCode
 	resp.Body = io.NopCloser(bytes.NewReader(c.body))
 	return resp, nil
 }
-
-var clientMock *httpClientMock
 
 func newOKMock() *httpClientMock {
 	return &httpClientMock{
