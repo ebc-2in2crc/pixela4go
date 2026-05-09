@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 )
 
 // A User manages communication with the Pixela user API.
@@ -24,7 +23,7 @@ func (u *User) Create(input *UserCreateInput) (*Result, error) {
 func (u *User) CreateWithContext(ctx context.Context, input *UserCreateInput) (*Result, error) {
 	param, err := u.createCreateRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create user create parameter")
+		return &Result{}, fmt.Errorf("failed to create user create parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -54,7 +53,7 @@ func (u *User) createCreateRequestParameter(input *UserCreateInput) (*requestPar
 		ThanksCode:          StringValue(input.ThanksCode),
 	})
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	return &requestParameter{
@@ -81,7 +80,7 @@ func (u *User) Update(input *UserUpdateInput) (*Result, error) {
 func (u *User) UpdateWithContext(ctx context.Context, input *UserUpdateInput) (*Result, error) {
 	param, err := u.createUpdateRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create user update parameter")
+		return &Result{}, fmt.Errorf("failed to create user update parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -106,7 +105,7 @@ func (u *User) createUpdateRequestParameter(input *UserUpdateInput) (*requestPar
 		AllowAIProcessing: input.AllowAIProcessing,
 	})
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	return &requestParameter{

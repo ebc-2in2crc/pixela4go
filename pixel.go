@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 )
 
 // A Pixel manages communication with the Pixela pixel API.
@@ -24,7 +23,7 @@ func (p *Pixel) Create(input *PixelCreateInput) (*Result, error) {
 func (p *Pixel) CreateWithContext(ctx context.Context, input *PixelCreateInput) (*Result, error) {
 	param, err := p.createCreateRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create pixel create parameter")
+		return &Result{}, fmt.Errorf("failed to create pixel create parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -44,7 +43,7 @@ type PixelCreateInput struct {
 func (p *Pixel) createCreateRequestParameter(input *PixelCreateInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	graphID := StringValue(input.GraphID)
@@ -121,13 +120,13 @@ func (p *Pixel) Get(input *PixelGetInput) (*Quantity, error) {
 func (p *Pixel) GetWithContext(ctx context.Context, input *PixelGetInput) (*Quantity, error) {
 	b, status, err := doRequest(ctx, p.createGetRequestParameter(input))
 	if err != nil {
-		return &Quantity{}, errors.Wrapf(err, "failed to do request")
+		return &Quantity{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var quantity Quantity
 	quantity.StatusCode = status
 	if err := json.Unmarshal(b, &quantity); err != nil {
-		return &Quantity{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &Quantity{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	quantity.IsSuccess = quantity.Message == ""
@@ -169,7 +168,7 @@ func (p *Pixel) Update(input *PixelUpdateInput) (*Result, error) {
 func (p *Pixel) UpdateWithContext(ctx context.Context, input *PixelUpdateInput) (*Result, error) {
 	param, err := p.createUpdateRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create pixel update parameter")
+		return &Result{}, fmt.Errorf("failed to create pixel update parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -188,7 +187,7 @@ type PixelUpdateInput struct {
 func (p *Pixel) createUpdateRequestParameter(input *PixelUpdateInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	graphID := StringValue(input.GraphID)
@@ -210,7 +209,7 @@ func (p *Pixel) Add(input *PixelAddInput) (*Result, error) {
 func (p *Pixel) AddWithContext(ctx context.Context, input *PixelAddInput) (*Result, error) {
 	param, err := p.createAddRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create pixel add parameter")
+		return &Result{}, fmt.Errorf("failed to create pixel add parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -229,7 +228,7 @@ type PixelAddInput struct {
 func (p *Pixel) createAddRequestParameter(input *PixelAddInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	graphID := StringValue(input.GraphID)
@@ -251,7 +250,7 @@ func (p *Pixel) Subtract(input *PixelSubtractInput) (*Result, error) {
 func (p *Pixel) SubtractWithContext(ctx context.Context, input *PixelSubtractInput) (*Result, error) {
 	param, err := p.createSubtractRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create pixel subtract parameter")
+		return &Result{}, fmt.Errorf("failed to create pixel subtract parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -270,7 +269,7 @@ type PixelSubtractInput struct {
 func (p *Pixel) createSubtractRequestParameter(input *PixelSubtractInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	graphID := StringValue(input.GraphID)

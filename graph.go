@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/pkg/errors"
 )
 
 // A Graph manages communication with the Pixela graph API.
@@ -25,7 +24,7 @@ func (g *Graph) Create(input *GraphCreateInput) (*Result, error) {
 func (g *Graph) CreateWithContext(ctx context.Context, input *GraphCreateInput) (*Result, error) {
 	param, err := g.createCreateRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create graph create parameter")
+		return &Result{}, fmt.Errorf("failed to create graph create parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -54,7 +53,7 @@ type GraphCreateInput struct {
 func (g *Graph) createCreateRequestParameter(input *GraphCreateInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	return &requestParameter{
@@ -102,13 +101,13 @@ func (g *Graph) GetAll() (*GraphDefinitions, error) {
 func (g *Graph) GetAllWithContext(ctx context.Context) (*GraphDefinitions, error) {
 	b, status, err := doRequest(ctx, g.createGetAllRequestParameter())
 	if err != nil {
-		return &GraphDefinitions{}, errors.Wrapf(err, "failed to do request")
+		return &GraphDefinitions{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var definitions GraphDefinitions
 	definitions.StatusCode = status
 	if err := json.Unmarshal(b, &definitions); err != nil {
-		return &GraphDefinitions{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &GraphDefinitions{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	definitions.IsSuccess = definitions.Message == ""
@@ -154,13 +153,13 @@ func (g *Graph) GetLatestPixel(input *GraphGetLatestPixelInput) (*GraphPixel, er
 func (g *Graph) GetLatestPixelWithContext(ctx context.Context, input *GraphGetLatestPixelInput) (*GraphPixel, error) {
 	b, status, err := doRequest(ctx, g.createGetLatestPixelRequestParameter(input))
 	if err != nil {
-		return &GraphPixel{}, errors.Wrapf(err, "failed to do request")
+		return &GraphPixel{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var pixel GraphPixel
 	pixel.StatusCode = status
 	if err := json.Unmarshal(b, &pixel); err != nil {
-		return &pixel, errors.Wrapf(err, "failed to unmarshal json")
+		return &pixel, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	pixel.IsSuccess = pixel.StatusCode == http.StatusOK
@@ -200,13 +199,13 @@ func (g *Graph) GetToday(input *GraphGetTodayInput) (*GraphPixel, error) {
 func (g *Graph) GetTodayWithContext(ctx context.Context, input *GraphGetTodayInput) (*GraphPixel, error) {
 	b, status, err := doRequest(ctx, g.createGetTodayRequestParameter(input))
 	if err != nil {
-		return &GraphPixel{}, errors.Wrapf(err, "failed to do request")
+		return &GraphPixel{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var pixel GraphPixel
 	pixel.StatusCode = status
 	if err := json.Unmarshal(b, &pixel); err != nil {
-		return &pixel, errors.Wrapf(err, "failed to unmarshal json")
+		return &pixel, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	pixel.IsSuccess = pixel.StatusCode == http.StatusOK
@@ -259,7 +258,7 @@ func (g *Graph) GetSVG(input *GraphGetSVGInput) (string, error) {
 func (g *Graph) GetSVGWithContext(ctx context.Context, input *GraphGetSVGInput) (string, error) {
 	b, err := mustDoRequest(ctx, g.createGetSVGRequestParameter(input))
 	if err != nil {
-		return "", errors.Wrapf(err, "failed to do request")
+		return "", fmt.Errorf("failed to do request: %w", err)
 	}
 
 	return string(b), nil
@@ -353,7 +352,7 @@ func (g *Graph) UpdatePixels(input *GraphUpdatePixelsInput) (*Result, error) {
 func (g *Graph) UpdatePixelsWithContext(ctx context.Context, input *GraphUpdatePixelsInput) (*Result, error) {
 	param, err := g.createUpdatePixelsRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create graph update pixels parameter")
+		return &Result{}, fmt.Errorf("failed to create graph update pixels parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -378,7 +377,7 @@ type PixelInput struct {
 func (g *Graph) createUpdatePixelsRequestParameter(input *GraphUpdatePixelsInput) (*requestParameter, error) {
 	b, err := json.Marshal(input.Pixels)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	ID := StringValue(input.ID)
@@ -431,13 +430,13 @@ func (g *Graph) Stats(input *GraphStatsInput) (*Stats, error) {
 func (g *Graph) StatsWithContext(ctx context.Context, input *GraphStatsInput) (*Stats, error) {
 	b, status, err := doRequest(ctx, g.createStatsRequestParameter(input))
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to do request")
+		return nil, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var stats Stats
 	stats.StatusCode = status
 	if err := json.Unmarshal(b, &stats); err != nil {
-		return nil, errors.Wrapf(err, "failed to unmarshal json")
+		return nil, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	stats.IsSuccess = stats.Message == ""
@@ -471,7 +470,7 @@ func (g *Graph) Update(input *GraphUpdateInput) (*Result, error) {
 func (g *Graph) UpdateWithContext(ctx context.Context, input *GraphUpdateInput) (*Result, error) {
 	param, err := g.createUpdateRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create graph update parameter")
+		return &Result{}, fmt.Errorf("failed to create graph update parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -496,7 +495,7 @@ type GraphUpdateInput struct {
 func (g *Graph) createUpdateRequestParameter(input *GraphUpdateInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	ID := StringValue(input.ID)
@@ -571,12 +570,12 @@ func (g *Graph) GetPixelDates(input *GraphGetPixelDatesInput) (*Pixels, error) {
 func (g *Graph) GetPixelDatesWithContext(ctx context.Context, input *GraphGetPixelDatesInput) (*Pixels, error) {
 	b, status, err := doRequest(ctx, g.createGetPixelDatesRequestParameter(input))
 	if err != nil {
-		return &Pixels{}, errors.Wrapf(err, "failed to do request")
+		return &Pixels{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	pixels, err := unmarshalPixels(b, BoolValue(input.WithBody))
 	if err != nil {
-		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &Pixels{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	pixels.StatusCode = status
@@ -621,7 +620,7 @@ func unmarshalPixelsWithBody(b []byte) (*Pixels, error) {
 		Result
 	}
 	if err := json.Unmarshal(b, &pixels); err != nil {
-		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &Pixels{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	return &Pixels{
@@ -636,7 +635,7 @@ func unmarshalPixelsNoBody(b []byte) (*Pixels, error) {
 		Result
 	}
 	if err := json.Unmarshal(b, &pixels); err != nil {
-		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &Pixels{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	return &Pixels{
@@ -706,13 +705,13 @@ func (g *Graph) Get(input *GraphGetInput) (*GraphDefinition, error) {
 func (g *Graph) GetWithContext(ctx context.Context, input *GraphGetInput) (*GraphDefinition, error) {
 	b, status, err := doRequest(ctx, g.createGetRequestParameter(input))
 	if err != nil {
-		return &GraphDefinition{}, errors.Wrapf(err, "failed to do request")
+		return &GraphDefinition{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var definition GraphDefinition
 	definition.StatusCode = status
 	if err := json.Unmarshal(b, &definition); err != nil {
-		return &GraphDefinition{}, errors.Wrapf(err, "failed to unmarshal json")
+		return &GraphDefinition{}, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	definition.IsSuccess = definition.Message == ""
@@ -744,7 +743,7 @@ func (g *Graph) Add(input *GraphAddInput) (*Result, error) {
 func (g *Graph) AddWithContext(ctx context.Context, input *GraphAddInput) (*Result, error) {
 	param, err := g.createAddRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create graph add parameter")
+		return &Result{}, fmt.Errorf("failed to create graph add parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -761,7 +760,7 @@ type GraphAddInput struct {
 func (g *Graph) createAddRequestParameter(input *GraphAddInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	graphID := StringValue(input.ID)
@@ -782,7 +781,7 @@ func (g *Graph) Subtract(input *GraphSubtractInput) (*Result, error) {
 func (g *Graph) SubtractWithContext(ctx context.Context, input *GraphSubtractInput) (*Result, error) {
 	param, err := g.createSubtractRequestParameter(input)
 	if err != nil {
-		return &Result{}, errors.Wrapf(err, "failed to create graph add parameter")
+		return &Result{}, fmt.Errorf("failed to create graph add parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, param)
@@ -799,7 +798,7 @@ type GraphSubtractInput struct {
 func (g *Graph) createSubtractRequestParameter(input *GraphSubtractInput) (*requestParameter, error) {
 	b, err := json.Marshal(input)
 	if err != nil {
-		return &requestParameter{}, errors.Wrap(err, "failed to marshal json")
+		return &requestParameter{}, fmt.Errorf("failed to marshal json: %w", err)
 	}
 
 	graphID := StringValue(input.ID)
@@ -820,13 +819,13 @@ func (g *Graph) Analyze(input *GraphAnalyzeInput) (*GraphAnalysis, error) {
 func (g *Graph) AnalyzeWithContext(ctx context.Context, input *GraphAnalyzeInput) (*GraphAnalysis, error) {
 	b, status, err := doRequest(ctx, g.createAnalyzeRequestParameter(input))
 	if err != nil {
-		return &GraphAnalysis{}, errors.Wrapf(err, "failed to do request")
+		return &GraphAnalysis{}, fmt.Errorf("failed to do request: %w", err)
 	}
 
 	var analysis GraphAnalysis
 	analysis.StatusCode = status
 	if err := json.Unmarshal(b, &analysis); err != nil {
-		return &analysis, errors.Wrapf(err, "failed to unmarshal json")
+		return &analysis, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
 	analysis.IsSuccess = analysis.StatusCode == http.StatusOK
