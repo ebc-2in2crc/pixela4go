@@ -158,10 +158,7 @@ func TestUserUpdateError(t *testing.T) {
 
 func TestCreateUserDeleteRequestParameter(t *testing.T) {
 	client := New(userName, token)
-	param, err := client.User().createDeleteRequestParameter()
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.User().createDeleteRequestParameter()
 
 	if param.Method != http.MethodDelete {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)

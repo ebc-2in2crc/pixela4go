@@ -73,10 +73,7 @@ func TestPixel_CreateError(t *testing.T) {
 func TestPixel_CreateIncrementRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &PixelIncrementInput{GraphID: String(graphID)}
-	param, err := client.Pixel().createIncrementRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Pixel().createIncrementRequestParameter(input)
 
 	if param.Method != http.MethodPut {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
@@ -132,10 +129,7 @@ func TestPixel_IncrementError(t *testing.T) {
 func TestPixel_CreateDecrementRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &PixelDecrementInput{GraphID: String(graphID)}
-	param, err := client.Pixel().createDecrementRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Pixel().createDecrementRequestParameter(input)
 
 	if param.Method != http.MethodPut {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodPut)
@@ -187,10 +181,7 @@ func TestPixel_DecrementError(t *testing.T) {
 func TestPixel_CreateGetRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &PixelGetInput{GraphID: String(graphID), Date: String("20180915")}
-	param, err := client.Pixel().createGetRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Pixel().createGetRequestParameter(input)
 
 	if param.Method != http.MethodGet {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodGet)
@@ -454,10 +445,7 @@ func TestPixel_SubtractError(t *testing.T) {
 func TestPixel_CreateDeleteRequestParameter(t *testing.T) {
 	client := New(userName, token)
 	input := &PixelDeleteInput{GraphID: String(graphID), Date: String("20180915")}
-	param, err := client.Pixel().createDeleteRequestParameter(input)
-	if err != nil {
-		t.Errorf("got: %v\nwant: nil", err)
-	}
+	param := client.Pixel().createDeleteRequestParameter(input)
 
 	if param.Method != http.MethodDelete {
 		t.Errorf("request method: %s\nwant: %s", param.Method, http.MethodDelete)
