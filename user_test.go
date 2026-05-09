@@ -36,9 +36,8 @@ func TestCreateUserCreateRequestParameter(t *testing.T) {
 }
 
 func TestUserCreate(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &UserCreateInput{
 		AgreeTermsOfService: Bool(true),
 		NotMinor:            Bool(true),
@@ -50,9 +49,8 @@ func TestUserCreate(t *testing.T) {
 }
 
 func TestUserCreateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &UserCreateInput{
 		AgreeTermsOfService: Bool(true),
 		NotMinor:            Bool(true),
@@ -64,9 +62,8 @@ func TestUserCreateFail(t *testing.T) {
 }
 
 func TestUserCreateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &UserCreateInput{
 		AgreeTermsOfService: Bool(true),
 		NotMinor:            Bool(true),
@@ -110,9 +107,8 @@ func TestCreateUserUpdateRequestParameter(t *testing.T) {
 }
 
 func TestUserUpdate(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &UserUpdateInput{
 		NewToken:   String("newToken"),
 		ThanksCode: String("thanks-code"),
@@ -123,9 +119,8 @@ func TestUserUpdate(t *testing.T) {
 }
 
 func TestUserUpdateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &UserUpdateInput{
 		NewToken:   String("newToken"),
 		ThanksCode: String("thanks-code"),
@@ -140,9 +135,8 @@ func TestUserUpdateFail(t *testing.T) {
 }
 
 func TestUserUpdateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &UserUpdateInput{
 		NewToken:   String("newToken"),
 		ThanksCode: String("thanks-code"),
@@ -179,27 +173,24 @@ func TestCreateUserDeleteRequestParameter(t *testing.T) {
 }
 
 func TestUserDelete(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	result, err := client.User().Delete()
 
 	testSuccess(t, result, err)
 }
 
 func TestUserDeleteFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	result, err := client.User().Delete()
 
 	testAPIFailedResult(t, result, err)
 }
 
 func TestUserDeleteError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	_, err := client.User().Delete()
 
 	testPageNotFoundError(t, err)

@@ -10,8 +10,9 @@ import (
 
 // A Pixel manages communication with the Pixela pixel API.
 type Pixel struct {
-	UserName string
-	Token    string
+	UserName   string
+	Token      string
+	httpClient HTTPClient
 }
 
 // Create records the quantity of the specified date as a "Pixel".
@@ -26,7 +27,7 @@ func (p *Pixel) CreateWithContext(ctx context.Context, input *PixelCreateInput) 
 		return &Result{}, fmt.Errorf("failed to create pixel create parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, p.httpClient, param)
 }
 
 // PixelCreateInput is input of Pixel.Create().
@@ -64,7 +65,7 @@ func (p *Pixel) Increment(input *PixelIncrementInput) (*Result, error) {
 // IncrementWithContext increments quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
 // If the graph type is int then 1 added, and for float then 0.01 added.
 func (p *Pixel) IncrementWithContext(ctx context.Context, input *PixelIncrementInput) (*Result, error) {
-	return doRequestAndParseResponse(ctx, p.createIncrementRequestParameter(input))
+	return doRequestAndParseResponse(ctx, p.httpClient, p.createIncrementRequestParameter(input))
 }
 
 // PixelIncrementInput is input of Pixel.Increment().
@@ -92,7 +93,7 @@ func (p *Pixel) Decrement(input *PixelDecrementInput) (*Result, error) {
 // DecrementWithContext decrements quantity "Pixel" of the day (it is used "timezone" setting if Graph's "timezone" is specified, if not specified, calculates it in "UTC").
 // If the graph type is int then -1 added, and for float then -0.01 added.
 func (p *Pixel) DecrementWithContext(ctx context.Context, input *PixelDecrementInput) (*Result, error) {
-	return doRequestAndParseResponse(ctx, p.createDecrementRequestParameter(input))
+	return doRequestAndParseResponse(ctx, p.httpClient, p.createDecrementRequestParameter(input))
 }
 
 // PixelDecrementInput is input of Pixel.Decrement().
@@ -118,7 +119,7 @@ func (p *Pixel) Get(input *PixelGetInput) (*Quantity, error) {
 
 // GetWithContext gets registered quantity as "Pixel".
 func (p *Pixel) GetWithContext(ctx context.Context, input *PixelGetInput) (*Quantity, error) {
-	b, status, err := doRequest(ctx, p.createGetRequestParameter(input))
+	b, status, err := doRequest(ctx, p.httpClient, p.createGetRequestParameter(input))
 	if err != nil {
 		return &Quantity{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -171,7 +172,7 @@ func (p *Pixel) UpdateWithContext(ctx context.Context, input *PixelUpdateInput) 
 		return &Result{}, fmt.Errorf("failed to create pixel update parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, p.httpClient, param)
 }
 
 // PixelUpdateInput is input of Pixel.Update().
@@ -212,7 +213,7 @@ func (p *Pixel) AddWithContext(ctx context.Context, input *PixelAddInput) (*Resu
 		return &Result{}, fmt.Errorf("failed to create pixel add parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, p.httpClient, param)
 }
 
 // PixelAddInput is input of Pixel.Add().
@@ -253,7 +254,7 @@ func (p *Pixel) SubtractWithContext(ctx context.Context, input *PixelSubtractInp
 		return &Result{}, fmt.Errorf("failed to create pixel subtract parameter: %w", err)
 	}
 
-	return doRequestAndParseResponse(ctx, param)
+	return doRequestAndParseResponse(ctx, p.httpClient, param)
 }
 
 // PixelSubtractInput is input of Pixel.Subtract().
@@ -289,7 +290,7 @@ func (p *Pixel) Delete(input *PixelDeleteInput) (*Result, error) {
 
 // DeleteWithContext deletes the registered "Pixel".
 func (p *Pixel) DeleteWithContext(ctx context.Context, input *PixelDeleteInput) (*Result, error) {
-	return doRequestAndParseResponse(ctx, p.createDeleteRequestParameter(input))
+	return doRequestAndParseResponse(ctx, p.httpClient, p.createDeleteRequestParameter(input))
 }
 
 // PixelDeleteInput is input of Pixel.Delete().

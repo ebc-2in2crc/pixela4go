@@ -9,6 +9,11 @@ import (
 	"net/http"
 )
 
+// HTTPClient is an interface for making HTTP requests.
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 // APIBaseURL is Base URL for API requests.
 const APIBaseURL = "https://pixe.la"
 
@@ -54,9 +59,9 @@ func newHTTPRequest(ctx context.Context, param *requestParameter) (*http.Request
 	return req, nil
 }
 
-func doRequest(ctx context.Context, param *requestParameter) ([]byte, int, error) {
+func doRequest(ctx context.Context, httpClient HTTPClient, param *requestParameter) ([]byte, int, error) {
 	retry := retryer{
-		processFunc: processFunc(ctx, param),
+		processFunc: processFunc(ctx, httpClient, param),
 		maxRetry:    getRetryCount(),
 	}
 	if err := retry.do(ctx); err != nil {
@@ -66,7 +71,7 @@ func doRequest(ctx context.Context, param *requestParameter) ([]byte, int, error
 	return retry.body, retry.statusCode, nil
 }
 
-func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) {
+func processFunc(ctx context.Context, httpClient HTTPClient, param *requestParameter) func(m *retryer) {
 	return func(m *retryer) {
 		req, err := newHTTPRequest(ctx, param)
 		if err != nil {
@@ -74,11 +79,7 @@ func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) 
 			return
 		}
 
-		client := http.Client{}
-		resp, err := client.Do(req)
-		if clientMock != nil {
-			resp, err = clientMock.do(req)
-		}
+		resp, err := httpClient.Do(req)
 		if err != nil {
 			m.err = fmt.Errorf("failed http.Client do: %w", err)
 			return
@@ -97,17 +98,13 @@ func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) 
 	}
 }
 
-func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error) {
+func mustDoRequest(ctx context.Context, httpClient HTTPClient, param *requestParameter) ([]byte, error) {
 	req, err := newHTTPRequest(ctx, param)
 	if err != nil {
 		return []byte{}, fmt.Errorf("failed to create http.Request: %w", err)
 	}
 
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if clientMock != nil {
-		resp, err = clientMock.do(req)
-	}
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return []byte{}, fmt.Errorf("failed http.Client do: %w", err)
 	}
@@ -125,9 +122,9 @@ func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error)
 	return b, nil
 }
 
-func doRequestAndParseResponse(ctx context.Context, param *requestParameter) (*Result, error) {
+func doRequestAndParseResponse(ctx context.Context, httpClient HTTPClient, param *requestParameter) (*Result, error) {
 	retry := retryer{
-		processFunc: processFunc(ctx, param),
+		processFunc: processFunc(ctx, httpClient, param),
 		maxRetry:    getRetryCount(),
 	}
 	if err := retry.do(ctx); err != nil {

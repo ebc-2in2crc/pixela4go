@@ -41,9 +41,8 @@ func TestPixel_CreateCreateRequestParameter(t *testing.T) {
 }
 
 func TestPixel_Create(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &PixelCreateInput{Date: String("20180915"), Quantity: String("5"), GraphID: String(graphID)}
 	result, err := client.Pixel().Create(input)
 
@@ -51,9 +50,8 @@ func TestPixel_Create(t *testing.T) {
 }
 
 func TestPixel_CreateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelCreateInput{Date: String("20180915"), Quantity: String("5"), GraphID: String(graphID)}
 	result, err := client.Pixel().Create(input)
 
@@ -61,9 +59,8 @@ func TestPixel_CreateFail(t *testing.T) {
 }
 
 func TestPixel_CreateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelCreateInput{Date: String("20180915"), Quantity: String("5"), GraphID: String(graphID)}
 	_, err := client.Pixel().Create(input)
 
@@ -97,9 +94,8 @@ func TestPixel_CreateIncrementRequestParameter(t *testing.T) {
 }
 
 func TestPixel_Increment(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &PixelIncrementInput{GraphID: String(graphID)}
 	result, err := client.Pixel().Increment(input)
 
@@ -107,9 +103,8 @@ func TestPixel_Increment(t *testing.T) {
 }
 
 func TestPixel_IncrementFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelIncrementInput{GraphID: String(graphID)}
 	result, err := client.Pixel().Increment(input)
 
@@ -117,9 +112,8 @@ func TestPixel_IncrementFail(t *testing.T) {
 }
 
 func TestPixel_IncrementError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelIncrementInput{GraphID: String(graphID)}
 	_, err := client.Pixel().Increment(input)
 
@@ -149,9 +143,8 @@ func TestPixel_CreateDecrementRequestParameter(t *testing.T) {
 }
 
 func TestPixel_Decrement(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &PixelDecrementInput{GraphID: String(graphID)}
 	result, err := client.Pixel().Decrement(input)
 
@@ -159,9 +152,8 @@ func TestPixel_Decrement(t *testing.T) {
 }
 
 func TestPixel_DecrementFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelDecrementInput{GraphID: String(graphID)}
 	result, err := client.Pixel().Decrement(input)
 
@@ -169,9 +161,8 @@ func TestPixel_DecrementFail(t *testing.T) {
 }
 
 func TestPixel_DecrementError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelDecrementInput{GraphID: String(graphID)}
 	_, err := client.Pixel().Decrement(input)
 
@@ -204,9 +195,8 @@ func TestPixel_CreateGetRequestParameter(t *testing.T) {
 func TestPixel_Get(t *testing.T) {
 	s := `{"quantity": "5","optionalData":"{\"key\":\"value\"}"}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &PixelGetInput{GraphID: String(graphID), Date: String("20180915")}
 	quantity, err := client.Pixel().Get(input)
 	if err != nil {
@@ -224,9 +214,8 @@ func TestPixel_Get(t *testing.T) {
 }
 
 func TestPixel_GetFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelGetInput{GraphID: String(graphID), Date: String("20180915")}
 	result, err := client.Pixel().Get(input)
 
@@ -234,9 +223,8 @@ func TestPixel_GetFail(t *testing.T) {
 }
 
 func TestPixel_GetError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelGetInput{GraphID: String(graphID), Date: String("20180915")}
 	_, err := client.Pixel().Get(input)
 
@@ -277,9 +265,8 @@ func TestPixel_CreateUpdateRequestParameter(t *testing.T) {
 }
 
 func TestPixel_Update(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &PixelUpdateInput{
 		GraphID:  String(graphID),
 		Date:     String("20180915"),
@@ -291,9 +278,8 @@ func TestPixel_Update(t *testing.T) {
 }
 
 func TestPixel_UpdateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelUpdateInput{
 		GraphID:  String(graphID),
 		Date:     String("20180915"),
@@ -305,9 +291,8 @@ func TestPixel_UpdateFail(t *testing.T) {
 }
 
 func TestPixel_UpdateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelUpdateInput{
 		GraphID:  String(graphID),
 		Date:     String("20180915"),
@@ -351,9 +336,8 @@ func TestPixel_CreateAddRequestParameter(t *testing.T) {
 }
 
 func TestPixel_Add(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &PixelAddInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("5")}
 	result, err := client.Pixel().Add(input)
 
@@ -361,9 +345,8 @@ func TestPixel_Add(t *testing.T) {
 }
 
 func TestPixel_AddFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelAddInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("5")}
 	result, err := client.Pixel().Add(input)
 
@@ -371,9 +354,8 @@ func TestPixel_AddFail(t *testing.T) {
 }
 
 func TestPixel_AddError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelAddInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("5")}
 	_, err := client.Pixel().Add(input)
 
@@ -413,9 +395,8 @@ func TestPixel_CreateSubtractRequestParameter(t *testing.T) {
 }
 
 func TestPixel_Subtract(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &PixelSubtractInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("3")}
 	result, err := client.Pixel().Subtract(input)
 
@@ -423,9 +404,8 @@ func TestPixel_Subtract(t *testing.T) {
 }
 
 func TestPixel_SubtractFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelSubtractInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("3")}
 	result, err := client.Pixel().Subtract(input)
 
@@ -433,9 +413,8 @@ func TestPixel_SubtractFail(t *testing.T) {
 }
 
 func TestPixel_SubtractError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelSubtractInput{GraphID: String(graphID), Date: String("20180915"), Quantity: String("3")}
 	_, err := client.Pixel().Subtract(input)
 
@@ -466,9 +445,8 @@ func TestPixel_CreateDeleteRequestParameter(t *testing.T) {
 }
 
 func TestPixel_Delete(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &PixelDeleteInput{GraphID: String(graphID), Date: String("20180915")}
 	result, err := client.Pixel().Delete(input)
 
@@ -476,9 +454,8 @@ func TestPixel_Delete(t *testing.T) {
 }
 
 func TestPixel_DeleteFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &PixelDeleteInput{GraphID: String(graphID), Date: String("20180915")}
 	result, err := client.Pixel().Delete(input)
 
@@ -486,9 +463,8 @@ func TestPixel_DeleteFail(t *testing.T) {
 }
 
 func TestPixel_DeleteError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &PixelDeleteInput{GraphID: String(graphID), Date: String("20180915")}
 	_, err := client.Pixel().Delete(input)
 

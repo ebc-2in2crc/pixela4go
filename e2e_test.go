@@ -59,7 +59,6 @@ If you run E2E test, Set below environment variables.
 }
 
 func initE2ETest() {
-	clientMock = nil
 	RetryCount = 20
 
 	name := os.Getenv("PIXELA4GO_USER_NAME")

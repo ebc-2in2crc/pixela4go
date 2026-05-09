@@ -10,8 +10,9 @@ import (
 
 // A Webhook manages communication with the Pixela webhook API.
 type Webhook struct {
-	UserName string
-	Token    string
+	UserName   string
+	Token      string
+	httpClient HTTPClient
 }
 
 // Create create a new Webhook.
@@ -26,7 +27,7 @@ func (w *Webhook) CreateWithContext(ctx context.Context, input *WebhookCreateInp
 		return &WebhookCreateResult{}, fmt.Errorf("failed to create webhook create parameter: %w", err)
 	}
 
-	b, status, err := doRequest(ctx, param)
+	b, status, err := doRequest(ctx, w.httpClient, param)
 	if err != nil {
 		return &WebhookCreateResult{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -84,7 +85,7 @@ func (w *Webhook) GetAll() (*WebhookDefinitions, error) {
 
 // GetAllWithContext get all predefined webhooks definitions.
 func (w *Webhook) GetAllWithContext(ctx context.Context) (*WebhookDefinitions, error) {
-	b, status, err := doRequest(ctx, w.createGetAllRequestParameter())
+	b, status, err := doRequest(ctx, w.httpClient, w.createGetAllRequestParameter())
 	if err != nil {
 		return &WebhookDefinitions{}, fmt.Errorf("failed to do request: %w", err)
 	}
@@ -128,7 +129,7 @@ func (w *Webhook) Delete(input *WebhookDeleteInput) (*Result, error) {
 
 // DeleteWithContext delete the registered Webhook.
 func (w *Webhook) DeleteWithContext(ctx context.Context, input *WebhookDeleteInput) (*Result, error) {
-	return doRequestAndParseResponse(ctx, w.createDeleteRequestParameter(input))
+	return doRequestAndParseResponse(ctx, w.httpClient, w.createDeleteRequestParameter(input))
 }
 
 // WebhookDeleteInput is input of Webhook.Delete().
@@ -156,7 +157,7 @@ func (w *Webhook) Invoke(input *WebhookInvokeInput) (*Result, error) {
 // InvokeWithContext invoke the webhook registered in advance.
 // It is used "timezone" setting as post date if Graph's "timezone" is specified, if not specified, calculates it in "UTC".
 func (w *Webhook) InvokeWithContext(ctx context.Context, input *WebhookInvokeInput) (*Result, error) {
-	return doRequestAndParseResponse(ctx, w.createInvokeRequestParameter(input))
+	return doRequestAndParseResponse(ctx, w.httpClient, w.createInvokeRequestParameter(input))
 }
 
 // WebhookInvokeInput is input of Webhook.Invoke().

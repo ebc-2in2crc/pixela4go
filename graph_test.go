@@ -49,9 +49,8 @@ func TestGraph_CreateCreateRequestParameter(t *testing.T) {
 }
 
 func TestGraph_Create(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &GraphCreateInput{
 		ID:                  String(graphID),
 		Name:                String("name"),
@@ -70,9 +69,8 @@ func TestGraph_Create(t *testing.T) {
 }
 
 func TestGraph_CreateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphCreateInput{
 		ID:                  String(graphID),
 		Name:                String("name"),
@@ -90,9 +88,8 @@ func TestGraph_CreateFail(t *testing.T) {
 }
 
 func TestGraph_CreateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphCreateInput{
 		ID:                  String(graphID),
 		Name:                String("name"),
@@ -134,9 +131,8 @@ func TestGraph_CreateGetAllRequestParameter(t *testing.T) {
 func TestGraph_GetAll(t *testing.T) {
 	s := `{"graphs":[{"id":"test-graph","name":"graph-name","unit":"commit","type":"int","color":"shibafu","timezone":"Asia/Tokyo","purgeCacheURLs":["https://camo.githubusercontent.com/xxx/xxxx"],"selfSufficient":"increment","isSecret":true,"publishOptionalData":true}]}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	definitions, err := client.Graph().GetAll()
 	if err != nil {
 		t.Errorf("got: %v\nwant: nil", err)
@@ -165,9 +161,8 @@ func TestGraph_GetAll(t *testing.T) {
 }
 
 func TestGraph_GetAllFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	result, err := client.Graph().GetAll()
 	if err != nil {
 		t.Errorf("got: %v\nwant: nil", result)
@@ -177,9 +172,8 @@ func TestGraph_GetAllFail(t *testing.T) {
 }
 
 func TestGraph_GetAllError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	_, err := client.Graph().GetAll()
 
 	testPageNotFoundError(t, err)
@@ -213,9 +207,8 @@ func TestGraph_CreateGetLatestPixelRequestParameter(t *testing.T) {
 func TestGraph_GetLatestPixel(t *testing.T) {
 	s := `{"date":"20240414","quantity":"5","optionalData":"{\"key\":\"value\"}"}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphGetLatestPixelInput{
 		ID: String(graphID),
 	}
@@ -236,9 +229,8 @@ func TestGraph_GetLatestPixel(t *testing.T) {
 }
 
 func TestGraph_GetLatestPixelError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphGetLatestPixelInput{
 		ID: String(graphID),
 	}
@@ -310,9 +302,8 @@ func TestGraph_CreateGetTodayRequestParameter(t *testing.T) {
 func TestGraph_GetToday(t *testing.T) {
 	s := `{"date":"20240414","quantity":"5","optionalData":"{\"key\":\"value\"}"}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphGetTodayInput{
 		ID: String(graphID),
 	}
@@ -333,9 +324,8 @@ func TestGraph_GetToday(t *testing.T) {
 }
 
 func TestGraph_GetTodayError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphGetTodayInput{
 		ID: String(graphID),
 	}
@@ -410,9 +400,8 @@ func TestGraph_CreateGetSVGRequestParameter(t *testing.T) {
 func TestGraph_GetSVG(t *testing.T) {
 	s := `<svg></svg>`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphGetSVGInput{
 		ID:   String(graphID),
 		Date: String("20180101"),
@@ -430,16 +419,16 @@ func TestGraph_GetSVG(t *testing.T) {
 }
 
 func TestGraph_GetSVGFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
+	mock := newAPIFailedMock()
 	client := New(userName, token)
+	client.HTTPClient = mock
 	input := &GraphGetSVGInput{
 		ID:   String(graphID),
 		Date: String("20180101"),
 		Mode: String(GraphModeShort),
 	}
 	_, err := client.Graph().GetSVG(input)
-	expect := "failed to do request: failed to call API: " + string(clientMock.body)
+	expect := "failed to do request: failed to call API: " + string(mock.body)
 	if err == nil {
 		t.Errorf("got: nil\nwant: %s", expect)
 	}
@@ -492,9 +481,8 @@ func TestGraph_CreateUpdatePixelsRequestParameter(t *testing.T) {
 }
 
 func TestGraph_UpdatePixels(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &GraphUpdatePixelsInput{
 		ID:     String(graphID),
 		Pixels: []PixelInput{},
@@ -505,9 +493,8 @@ func TestGraph_UpdatePixels(t *testing.T) {
 }
 
 func TestGraph_UpdatePixelsFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphUpdatePixelsInput{
 		ID:     String(graphID),
 		Pixels: []PixelInput{},
@@ -518,9 +505,8 @@ func TestGraph_UpdatePixelsFail(t *testing.T) {
 }
 
 func TestGraph_UpdatePixelsError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphUpdatePixelsInput{
 		ID:     String(graphID),
 		Pixels: []PixelInput{},
@@ -574,9 +560,8 @@ func TestGraph_CreateStatsRequestParameter(t *testing.T) {
 func TestGraph_Stats(t *testing.T) {
 	s := `{"totalPixelsCount":1,"maxQuantity":2,"maxDate":"2023-09-01","minQuantity":3,"minDate":"2023-09-02","totalQuantity":4,"avgQuantity":5.0,"todaysQuantity":6,"yesterdayQuantity":66}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphStatsInput{ID: String(graphID)}
 	stats, err := client.Graph().Stats(input)
 	if err != nil {
@@ -601,9 +586,8 @@ func TestGraph_Stats(t *testing.T) {
 }
 
 func TestGraph_StatsFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphStatsInput{ID: String(graphID)}
 	result, err := client.Graph().Stats(input)
 	if err != nil {
@@ -614,9 +598,8 @@ func TestGraph_StatsFail(t *testing.T) {
 }
 
 func TestGraph_StatsError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphStatsInput{ID: String(graphID)}
 	_, err := client.Graph().Stats(input)
 
@@ -664,9 +647,8 @@ func TestGraph_CreateUpdateRequestParameter(t *testing.T) {
 }
 
 func TestGraph_Update(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &GraphUpdateInput{
 		ID:                  String(graphID),
 		Name:                String("name"),
@@ -685,9 +667,8 @@ func TestGraph_Update(t *testing.T) {
 }
 
 func TestGraph_UpdateFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphUpdateInput{
 		ID:                  String(graphID),
 		Name:                String("name"),
@@ -705,9 +686,8 @@ func TestGraph_UpdateFail(t *testing.T) {
 }
 
 func TestGraph_UpdateError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphUpdateInput{
 		ID:                  String(graphID),
 		Name:                String("name"),
@@ -748,9 +728,8 @@ func TestGraph_CreateDeleteRequestParameter(t *testing.T) {
 }
 
 func TestGraph_Delete(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &GraphDeleteInput{ID: String(graphID)}
 	result, err := client.Graph().Delete(input)
 
@@ -758,9 +737,8 @@ func TestGraph_Delete(t *testing.T) {
 }
 
 func TestGraph_DeleteFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphDeleteInput{ID: String(graphID)}
 	result, err := client.Graph().Delete(input)
 
@@ -768,9 +746,8 @@ func TestGraph_DeleteFail(t *testing.T) {
 }
 
 func TestGraph_DeleteError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphDeleteInput{ID: String(graphID)}
 	_, err := client.Graph().Delete(input)
 
@@ -808,9 +785,8 @@ func TestGraph_CreateGetPixelDatesRequestParameter(t *testing.T) {
 func TestGraph_GetPixelDates(t *testing.T) {
 	s := `{"pixels":["20180101","20180331"]}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphGetPixelDatesInput{ID: String(graphID), From: String("20180101"), To: String("20181231")}
 	pixels, err := client.Graph().GetPixelDates(input)
 	if err != nil {
@@ -829,9 +805,8 @@ func TestGraph_GetPixelDates(t *testing.T) {
 func TestGraph_GetPixelDatesWithBody(t *testing.T) {
 	s := `{"pixels":[{"date":"20180331","quantity":"1","optionalData":"{\"key\":\"value\"}"}]}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphGetPixelDatesInput{
 		ID:       String(graphID),
 		From:     String("20180101"),
@@ -859,9 +834,8 @@ func TestGraph_GetPixelDatesWithBody(t *testing.T) {
 }
 
 func TestGraph_GetPixelDatesFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphGetPixelDatesInput{ID: String(graphID), From: String("20180101"), To: String("20181231")}
 	result, err := client.Graph().GetPixelDates(input)
 	if err != nil {
@@ -872,9 +846,8 @@ func TestGraph_GetPixelDatesFail(t *testing.T) {
 }
 
 func TestGraph_GetPixelDatesError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphGetPixelDatesInput{ID: String(graphID), From: String("20180101"), To: String("20181231")}
 	_, err := client.Graph().GetPixelDates(input)
 
@@ -908,9 +881,8 @@ func TestGraph_CreateStopwatchRequestParameter(t *testing.T) {
 }
 
 func TestGraph_Stopwatch(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &GraphStopwatchInput{ID: String(graphID)}
 	result, err := client.Graph().Stopwatch(input)
 
@@ -918,9 +890,8 @@ func TestGraph_Stopwatch(t *testing.T) {
 }
 
 func TestGraph_StopwatchFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphStopwatchInput{ID: String(graphID)}
 	result, err := client.Graph().Stopwatch(input)
 
@@ -928,9 +899,8 @@ func TestGraph_StopwatchFail(t *testing.T) {
 }
 
 func TestGraph_StopwatchError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphStopwatchInput{ID: String(graphID)}
 	_, err := client.Graph().Stopwatch(input)
 
@@ -962,9 +932,8 @@ func TestGraph_CreateGetRequestParameter(t *testing.T) {
 func TestGraph_Get(t *testing.T) {
 	s := `{"id":"test-graph","name":"graph-name","unit":"commit","type":"int","color":"shibafu","timezone":"Asia/Tokyo","purgeCacheURLs":["https://camo.githubusercontent.com/xxx/xxxx"],"selfSufficient":"increment","isSecret":true,"publishOptionalData":true}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphGetInput{ID: String(graphID)}
 	definition, err := client.Graph().Get(input)
 	if err != nil {
@@ -990,9 +959,8 @@ func TestGraph_Get(t *testing.T) {
 }
 
 func TestGraph_GetFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphGetInput{ID: String(graphID)}
 	result, err := client.Graph().Get(input)
 	if err != nil {
@@ -1003,9 +971,8 @@ func TestGraph_GetFail(t *testing.T) {
 }
 
 func TestGraph_GetError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphGetInput{ID: String(graphID)}
 	_, err := client.Graph().Get(input)
 
@@ -1044,9 +1011,8 @@ func TestGraph_CreateAddRequestParameter(t *testing.T) {
 }
 
 func TestGraph_Add(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &GraphAddInput{
 		ID:       String(graphID),
 		Quantity: String("1"),
@@ -1057,9 +1023,8 @@ func TestGraph_Add(t *testing.T) {
 }
 
 func TestGraph_AddFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphAddInput{
 		ID:       String(graphID),
 		Quantity: String("1"),
@@ -1070,9 +1035,8 @@ func TestGraph_AddFail(t *testing.T) {
 }
 
 func TestGraph_AddError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphAddInput{
 		ID:       String(graphID),
 		Quantity: String("1"),
@@ -1114,9 +1078,8 @@ func TestGraph_CreateSubtractRequestParameter(t *testing.T) {
 }
 
 func TestGraph_Subtract(t *testing.T) {
-	clientMock = newOKMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newOKMock()
 	input := &GraphSubtractInput{
 		ID:       String(graphID),
 		Quantity: String("1"),
@@ -1127,9 +1090,8 @@ func TestGraph_Subtract(t *testing.T) {
 }
 
 func TestGraph_SubtractFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphSubtractInput{
 		ID:       String(graphID),
 		Quantity: String("1"),
@@ -1140,9 +1102,8 @@ func TestGraph_SubtractFail(t *testing.T) {
 }
 
 func TestGraph_SubtractError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphSubtractInput{
 		ID:       String(graphID),
 		Quantity: String("1"),
@@ -1178,9 +1139,8 @@ func TestGraph_CreateAnalyzeRequestParameter(t *testing.T) {
 func TestGraph_Analyze(t *testing.T) {
 	s := `{"analysis":"This graph shows a consistent upward trend."}`
 	b := []byte(s)
-	clientMock = &httpClientMock{statusCode: http.StatusOK, body: b}
-
 	client := New(userName, token)
+	client.HTTPClient = &httpClientMock{statusCode: http.StatusOK, body: b}
 	input := &GraphAnalyzeInput{
 		ID: String(graphID),
 	}
@@ -1199,9 +1159,8 @@ func TestGraph_Analyze(t *testing.T) {
 }
 
 func TestGraph_AnalyzeFail(t *testing.T) {
-	clientMock = newAPIFailedMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newAPIFailedMock()
 	input := &GraphAnalyzeInput{
 		ID: String(graphID),
 	}
@@ -1216,9 +1175,8 @@ func TestGraph_AnalyzeFail(t *testing.T) {
 }
 
 func TestGraph_AnalyzeError(t *testing.T) {
-	clientMock = newPageNotFoundMock()
-
 	client := New(userName, token)
+	client.HTTPClient = newPageNotFoundMock()
 	input := &GraphAnalyzeInput{
 		ID: String(graphID),
 	}
