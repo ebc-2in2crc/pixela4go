@@ -143,3 +143,25 @@ WebhookTypeAdd / Increment / Decrement / Stopwatch / Subtract
 ```
 issue/:id   e.g. issue/42/add-graph-foo
 ```
+
+## Commit Convention
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/). Format:
+
+```
+<type>[(<scope>)]: <description>
+```
+
+Scope is optional. When used, it should be the domain being changed: `graph`, `pixel`, `user`, `user-profile`, `webhook`, `api`, `retry`, `util`.
+
+| Type | When to use | Example |
+|---|---|---|
+| `feat` | New public method or input field | `feat(graph): add Graph.Analyze method` |
+| `fix` | Wrong URL, HTTP method, field name, IsSuccess logic | `fix(pixel): use correct endpoint for Decrement` |
+| `docs` | README, AGENTS.md, godoc comments | `docs: add commit convention section` |
+| `refactor` | Internal restructuring, no behavior change | `refactor(api): replace internal types with anonymous structs` |
+| `test` | Unit/E2E test additions or changes only | `test(graph): add TestGraph_Analyze` |
+| `chore` | Dependency updates, stdlib migrations, Makefile, go.mod | `chore: replace ioutil with io package` |
+| `ci` | `.github/workflows/` changes | `ci: upgrade setup-go to v4` |
+
+For breaking changes (removed method, changed signature), append `!` after the type (`feat!:`) or add a `BREAKING CHANGE:` footer.

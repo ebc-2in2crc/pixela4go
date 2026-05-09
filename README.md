@@ -139,8 +139,22 @@ func main() {
 3. Change codes
 4. Run test suite with the `make test` command and confirm that it passes
 5. Run `make fmt`
-6. Commit your changes (`git commit -am 'Add some feature'`)
+6. Commit your changes using [Conventional Commits](https://www.conventionalcommits.org/) format
 7. Create new Pull Request
+
+### Commit Types
+
+| Type | Description |
+|---|---|
+| `feat` | Add a new API method or input field |
+| `fix` | Fix incorrect behavior (wrong URL, HTTP method, field handling, etc.) |
+| `docs` | Documentation changes only (README, AGENTS.md, godoc comments) |
+| `refactor` | Internal restructuring without behavior changes |
+| `test` | Add or modify tests without changing production code |
+| `chore` | Dependency updates, stdlib migrations, Makefile, go.mod changes |
+| `ci` | Changes to CI configuration (`.github/workflows/`) |
+
+For breaking changes, append `!` after the type (`feat!:`) or add a `BREAKING CHANGE:` footer.
 
 ## License
 
