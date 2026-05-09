@@ -643,16 +643,6 @@ type PixelWithBody struct {
 	OptionalData string `json:"optionalData"`
 }
 
-type pixelsWithBody struct {
-	Pixels []PixelWithBody `json:"pixels"`
-	Result
-}
-
-type pixelsWithNoBody struct {
-	Pixels []string `json:"pixels"`
-	Result
-}
-
 func unmarshalPixels(b []byte, withBody bool) (*Pixels, error) {
 	if withBody {
 		return unmarshalPixelsWithBody(b)
@@ -661,7 +651,10 @@ func unmarshalPixels(b []byte, withBody bool) (*Pixels, error) {
 }
 
 func unmarshalPixelsWithBody(b []byte) (*Pixels, error) {
-	var pixels pixelsWithBody
+	var pixels struct {
+		Pixels []PixelWithBody `json:"pixels"`
+		Result
+	}
 	if err := json.Unmarshal(b, &pixels); err != nil {
 		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
 	}
@@ -673,7 +666,10 @@ func unmarshalPixelsWithBody(b []byte) (*Pixels, error) {
 }
 
 func unmarshalPixelsNoBody(b []byte) (*Pixels, error) {
-	var pixels pixelsWithNoBody
+	var pixels struct {
+		Pixels []string `json:"pixels"`
+		Result
+	}
 	if err := json.Unmarshal(b, &pixels); err != nil {
 		return &Pixels{}, errors.Wrapf(err, "failed to unmarshal json")
 	}
