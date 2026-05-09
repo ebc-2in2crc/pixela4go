@@ -2,7 +2,7 @@ package pixela
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -22,7 +22,7 @@ type httpClientMock struct {
 func (c *httpClientMock) do(req *http.Request) (*http.Response, error) {
 	resp := &http.Response{}
 	resp.StatusCode = c.statusCode
-	resp.Body = ioutil.NopCloser(bytes.NewReader(c.body))
+	resp.Body = io.NopCloser(bytes.NewReader(c.body))
 	return resp, nil
 }
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -86,7 +86,7 @@ func processFunc(ctx context.Context, param *requestParameter) func(m *retryer) 
 		}
 		defer resp.Body.Close()
 
-		b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			m.err = errors.Wrapf(err, "failed to read response body")
 			return
@@ -114,7 +114,7 @@ func mustDoRequest(ctx context.Context, param *requestParameter) ([]byte, error)
 	}
 	defer resp.Body.Close()
 
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return []byte{}, errors.Wrapf(err, "failed to read response body")
 	}
