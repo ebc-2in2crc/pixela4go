@@ -686,21 +686,25 @@ func unmarshalPixelsNoBody(b []byte) (*Pixels, error) {
 
 func (g *Graph) createGetPixelDatesRequestParameter(input *GraphGetPixelDatesInput) (*requestParameter, error) {
 	ID := StringValue(input.ID)
-	from := StringValue(input.From)
-	if from != "" {
-		from = "from=" + from
+	baseURL := fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels", g.UserName, ID)
+
+	query := make(url.Values)
+	if from := StringValue(input.From); from != "" {
+		query.Set("from", from)
 	}
-	to := StringValue(input.To)
-	if to != "" {
-		to = "to=" + to
+	if to := StringValue(input.To); to != "" {
+		query.Set("to", to)
 	}
-	withBody := ""
 	if BoolValue(input.WithBody) {
-		withBody = "withBody=true"
+		query.Set("withBody", "true")
 	}
+	if len(query) > 0 {
+		baseURL = baseURL + "?" + query.Encode()
+	}
+
 	return &requestParameter{
 		Method: http.MethodGet,
-		URL:    fmt.Sprintf(APIBaseURLForV1+"/users/%s/graphs/%s/pixels?%s&%s&%s", g.UserName, ID, from, to, withBody),
+		URL:    baseURL,
 		Header: map[string]string{userToken: g.Token},
 		Body:   []byte{},
 	}, nil
