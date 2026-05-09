@@ -12,8 +12,8 @@ util.go          — Pointer helpers: String/StringValue, Bool/BoolValue
 user.go          — User Create/Update/Delete
 user_profile.go  — UserProfile Update + URL
 graph.go         — Graph CRUD + SVG, Stats, Stopwatch, Add/Subtract, GetPixelDates,
-                   GetLatestPixel, GetToday, UpdatePixels, URL
-pixel.go         — Pixel Create/Get/Update/Delete + Increment/Decrement
+                   GetLatestPixel, GetToday, UpdatePixels, URL, Get (single), Analyze
+pixel.go         — Pixel Create/Get/Update/Delete + Increment/Decrement/Add/Subtract
 webhook.go       — Webhook Create/GetAll/Delete/Invoke
 test_common.go   — Shared test helpers and httpClientMock
 e2e_*.go         — E2E tests (skipped unless PIXELA4GO_E2E_TEST_RUN=ON)
@@ -50,8 +50,10 @@ Each method builds a `*requestParameter{Method, URL, Header, Body}` via a privat
 - `mustDoRequest` — for non-JSON responses (SVG) or when HTTP status determines success
 
 ### IsSuccess determination
-- Endpoints returning a `Result` body: `IsSuccess = (message == "")`
-- Endpoints returning a custom struct (GetLatestPixel, GetToday): `IsSuccess = (statusCode == 200)`
+- `doRequestAndParseResponse` (returns `*Result`): `IsSuccess` is set directly from the API's `isSuccess` JSON field.
+- Custom struct responses via `doRequest`: success responses from these endpoints typically omit `isSuccess`, so `IsSuccess` is computed explicitly:
+  - Most endpoints (GetAll, Stats, GetPixelDates, Get, Pixel.Get, Webhook.GetAll): `IsSuccess = (message == "")` — no error message means success.
+  - GetLatestPixel, GetToday, Analyze: `IsSuccess = (statusCode == 200)`.
 
 ### Retry on rejection
 Pixela returns HTTP 503 + `{"isRejected":true}` when rate-limited.
@@ -61,16 +63,18 @@ Set `pixela.RetryCount = N` (global, default 0) before making calls to enable ex
 ## Testing
 
 ### Unit tests
-Tests live alongside source files in package `pixela`. The package-level var `clientMock`
-intercepts HTTP calls when non-nil:
+Tests live alongside source files in package `pixela`. Each test creates a `Client` and
+sets its `HTTPClient` field to one of the mock helpers:
 ```go
-clientMock = newOKMock()           // 200 + {"message":"Success.","isSuccess":true}
-clientMock = newAPIFailedMock()    // 404 + {"message":"failed.","isSuccess":false}
-clientMock = newPageNotFoundMock() // 404 + "404 page not found" (triggers unmarshal error)
+client := New(userName, token)
+client.HTTPClient = newOKMock()           // 200 + {"message":"Success.","isSuccess":true}
+client.HTTPClient = newAPIFailedMock()    // 404 + {"message":"failed.","isSuccess":false}
+client.HTTPClient = newPageNotFoundMock() // 404 + "404 page not found" (triggers unmarshal error)
 ```
-Each feature file has two test shapes:
+Each feature file has three test shapes:
 1. `TestX_CreateXRequestParameter` — verifies the HTTP method, URL, headers, and JSON body
-2. `TestX_Method` / `TestX_MethodFail` — verifies the full call via mock
+2. `TestX_Method` — verifies the full call succeeds via `newOKMock()`
+3. `TestX_MethodFail` / `TestX_MethodError` — verifies failure paths via `newAPIFailedMock()` / `newPageNotFoundMock()`
 
 ### E2E tests
 Collected in `e2e_*.go`. All run under a single `TestE2E` gate that skips unless
@@ -82,7 +86,7 @@ PIXELA4GO_USER_FIRST_TOKEN=<token>
 PIXELA4GO_USER_SECOND_TOKEN=<token>
 PIXELA4GO_THANKS_CODE=<code>
 ```
-E2E tests set `clientMock = nil` to hit the real API.
+E2E tests create a `Client` via `New(name, token)` (which defaults to `&http.Client{}`), hitting the real API.
 
 ## Commands
 
