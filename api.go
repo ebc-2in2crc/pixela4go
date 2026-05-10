@@ -99,27 +99,19 @@ func processFunc(ctx context.Context, httpClient HTTPClient, param *requestParam
 }
 
 func mustDoRequest(ctx context.Context, httpClient HTTPClient, param *requestParameter) ([]byte, error) {
-	req, err := newHTTPRequest(ctx, param)
-	if err != nil {
-		return []byte{}, fmt.Errorf("failed to create http.Request: %w", err)
+	retry := retryer{
+		processFunc: processFunc(ctx, httpClient, param),
+		maxRetry:    getRetryCount(),
+	}
+	if err := retry.do(ctx); err != nil {
+		return []byte{}, err
 	}
 
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return []byte{}, fmt.Errorf("failed http.Client do: %w", err)
-	}
-	defer resp.Body.Close()
-
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return []byte{}, fmt.Errorf("failed to read response body: %w", err)
+	if retry.statusCode >= 300 {
+		return retry.body, fmt.Errorf("failed to call API: %s", string(retry.body))
 	}
 
-	if resp.StatusCode >= 300 {
-		return b, fmt.Errorf("failed to call API: %s", string(b))
-	}
-
-	return b, nil
+	return retry.body, nil
 }
 
 func doRequestAndParseResponse(ctx context.Context, httpClient HTTPClient, param *requestParameter) (*Result, error) {
