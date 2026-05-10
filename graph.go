@@ -269,11 +269,11 @@ func (g *Graph) GetSVGWithContext(ctx context.Context, input *GraphGetSVGInput) 
 type GraphGetSVGInput struct {
 	// ID is a required field
 	ID          *string `json:"-"`
-	Date        *string `json:"date,omitempty"`
-	Mode        *string `json:"mode,omitempty"`
-	Appearance  *string `json:"appearance,omitempty"`
-	LessThan    *string `json:"lessThan,omitempty"`
-	GreaterThan *string `json:"greaterThan,omitempty"`
+	Date        *string `json:"-"`
+	Mode        *string `json:"-"`
+	Appearance  *string `json:"-"`
+	LessThan    *string `json:"-"`
+	GreaterThan *string `json:"-"`
 }
 
 func (g *Graph) createGetSVGRequestParameter(input *GraphGetSVGInput) *requestParameter {
