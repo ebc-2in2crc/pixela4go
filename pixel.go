@@ -71,7 +71,7 @@ func (p *Pixel) IncrementWithContext(ctx context.Context, input *PixelIncrementI
 // PixelIncrementInput is input of Pixel.Increment().
 type PixelIncrementInput struct {
 	// GraphID is a required field
-	GraphID *string
+	GraphID *string `json:"-"`
 }
 
 func (p *Pixel) createIncrementRequestParameter(input *PixelIncrementInput) *requestParameter {
@@ -99,7 +99,7 @@ func (p *Pixel) DecrementWithContext(ctx context.Context, input *PixelDecrementI
 // PixelDecrementInput is input of Pixel.Decrement().
 type PixelDecrementInput struct {
 	// GraphID is a required field
-	GraphID *string
+	GraphID *string `json:"-"`
 }
 
 func (p *Pixel) createDecrementRequestParameter(input *PixelDecrementInput) *requestParameter {
@@ -137,9 +137,9 @@ func (p *Pixel) GetWithContext(ctx context.Context, input *PixelGetInput) (*Quan
 // PixelGetInput is input of Pixel.Get().
 type PixelGetInput struct {
 	// GraphID is a required field
-	GraphID *string
+	GraphID *string `json:"-"`
 	// Date is required field.
-	Date *string
+	Date *string `json:"-"`
 }
 
 func (p *Pixel) createGetRequestParameter(input *PixelGetInput) *requestParameter {
@@ -296,9 +296,9 @@ func (p *Pixel) DeleteWithContext(ctx context.Context, input *PixelDeleteInput) 
 // PixelDeleteInput is input of Pixel.Delete().
 type PixelDeleteInput struct {
 	// GraphID is a required field
-	GraphID *string
+	GraphID *string `json:"-"`
 	// Date is a required field
-	Date *string
+	Date *string `json:"-"`
 }
 
 func (p *Pixel) createDeleteRequestParameter(input *PixelDeleteInput) *requestParameter {
