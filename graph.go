@@ -447,7 +447,7 @@ func (g *Graph) StatsWithContext(ctx context.Context, input *GraphStatsInput) (*
 // GraphStatsInput is input of Graph.Stats().
 type GraphStatsInput struct {
 	// ID is a required field
-	ID *string
+	ID *string `json:"-"`
 }
 
 func (g *Graph) createStatsRequestParameter(input *GraphStatsInput) *requestParameter {
@@ -587,10 +587,10 @@ func (g *Graph) GetPixelDatesWithContext(ctx context.Context, input *GraphGetPix
 // GraphGetPixelDatesInput is input of Graph.GetPixelDates().
 type GraphGetPixelDatesInput struct {
 	// ID is a required field
-	ID       *string
-	From     *string
-	To       *string
-	WithBody *bool
+	ID       *string `json:"-"`
+	From     *string `json:"-"`
+	To       *string `json:"-"`
+	WithBody *bool   `json:"-"`
 }
 
 // Pixels is Date list of Pixel registered in the graph.
@@ -684,7 +684,7 @@ func (g *Graph) StopwatchWithContext(ctx context.Context, input *GraphStopwatchI
 // GraphStopwatchInput is input of Graph.Stopwatch().
 type GraphStopwatchInput struct {
 	// ID is a required field
-	ID *string
+	ID *string `json:"-"`
 }
 
 func (g *Graph) createStopwatchRequestParameter(input *GraphStopwatchInput) *requestParameter {
