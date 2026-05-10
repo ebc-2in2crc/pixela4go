@@ -782,7 +782,7 @@ func (g *Graph) Subtract(input *GraphSubtractInput) (*Result, error) {
 func (g *Graph) SubtractWithContext(ctx context.Context, input *GraphSubtractInput) (*Result, error) {
 	param, err := g.createSubtractRequestParameter(input)
 	if err != nil {
-		return &Result{}, fmt.Errorf("failed to create graph add parameter: %w", err)
+		return &Result{}, fmt.Errorf("failed to create graph subtract parameter: %w", err)
 	}
 
 	return doRequestAndParseResponse(ctx, g.httpClient, param)
